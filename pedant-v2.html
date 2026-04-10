@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Pedant!</title>
+  <style>
+    :root {
+      --bg: #1c1711;
+      --paper: #d8c7a6;
+      --ink: #2c2418;
+      --frame: #8c7552;
+      --gold: #b1935a;
+      --dark-gold: #7c6541;
+      --correct: #31492f;
+      --wrong: #5a2b24;
+      --shadow: rgba(0,0,0,0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html, body {
+      margin: 0;
+      padding: 0;
+      min-height: 100%;
+      font-family: "Georgia", "Times New Roman", serif;
+      background:
+        radial-gradient(circle at center, rgba(255, 240, 210, 0.08), transparent 45%),
+        linear-gradient(180deg, #241d15 0%, #120f0b 100%);
+      color: var(--ink);
+      overflow-x: hidden;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        repeating-linear-gradient(
+          to bottom,
+          rgba(255,255,255,0.02) 0px,
+          rgba(255,255,255,0.02) 2px,
+          rgba(0,0,0,0.02) 3px,
+          rgba(0,0,0,0.02) 4px
+        ),
+        radial-gradient(circle at center, transparent 50%, rgba(0,0,0,0.45) 100%);
+      mix-blend-mode: soft-light;
+      animation: flicker 0.14s infinite steps(2);
+      z-index: 2;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      background:
+        linear-gradient(
+          90deg,
+          transparent 0%,
+          rgba(255,255,255,0.05) 48%,
+          rgba(255,255,255,0.10) 50%,
+          rgba(255,255,255,0.04) 52%,
+          transparent 100%
+        );
+      opacity: 0.15;
+      animation: reel 8s linear infinite;
+      z-index: 3;
+    }
+
+    @keyframes flicker {
+      0% { opacity: 0.94; }
+      25% { opacity: 0.98; }
+      50% { opacity: 0.91; }
+      75% { opacity: 1; }
+      100% { opacity: 0.95; }
+    }
+
+    @keyframes reel {
+      from { transform: translateX(-3%); }
+      to { transform: translateX(3%); }
+    }
+
+    .page {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 28px;
+    }
+
+    .screen {
+      width: min(900px, 100%);
+      background:
+        radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 42%),
+        linear-gradient(180deg, #e6d7b5 0%, #cdb78d 100%);
+      border: 12px solid var(--frame);
+      box-shadow:
+        0 24px 60px var(--shadow),
+        inset 0 0 0 3px #eadabd,
+        inset 0 0 40px rgba(60, 40, 20, 0.22);
+      border-radius: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .screen::before,
+    .screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .screen::before {
+      background:
+        radial-gradient(circle at 20% 10%, rgba(255,255,255,0.15), transparent 25%),
+        radial-gradient(circle at 75% 30%, rgba(255,255,255,0.08), transparent 20%),
+        repeating-linear-gradient(
+          135deg,
+          rgba(0,0,0,0.025) 0px,
+          rgba(0,0,0,0.025) 1px,
+          transparent 2px,
+          transparent 6px
+        );
+      opacity: 0.7;
+    }
+
+    .screen::after {
+      background: radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.28) 100%);
+    }
+
+    .masthead {
+      text-align: center;
+      padding: 26px 24px 16px;
+      border-bottom: 3px double var(--dark-gold);
+      position: relative;
+    }
+
+    .tiny {
+      font-size: 0.8rem;
+      letter-spacing: 0.16em;
+      text-transform: uppercase;
+      opacity: 0.78;
+      margin-bottom: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(2.8rem, 8vw, 5.2rem);
+      line-height: 0.95;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      text-shadow: 2px 2px 0 rgba(255,255,255,0.18);
+    }
+
+    .subtitle {
+      margin-top: 10px;
+      font-size: 1rem;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+    }
+
+    .content {
+      padding: 24px;
+      display: grid;
+      gap: 18px;
+    }
+
+    .intertitle {
+      border: 4px solid var(--ink);
+      padding: 18px;
+      background:
+        linear-gradient(180deg, rgba(255,255,255,0.15), transparent),
+        rgba(245, 233, 202, 0.7);
+      box-shadow: inset 0 0 0 2px rgba(255,255,255,0.25);
+    }
+
+    .question-number {
+      text-align: center;
+      font-size: 0.85rem;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      margin-bottom: 10px;
+    }
+
+    .question {
+      font-size: clamp(1.4rem, 3vw, 2rem);
+      text-align: center;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .choices {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
+
+    .choice {
+      appearance: none;
+      border: 3px solid var(--ink);
+      background: rgba(245, 236, 211, 0.82);
+      padding: 14px 16px;
+      font-size: 1.1rem;
+      font-family: inherit;
+      cursor: pointer;
+      color: var(--ink);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      box-shadow: 4px 4px 0 rgba(60, 45, 25, 0.18);
+      transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
+    }
+
+    .choice:hover {
+      transform: translate(-1px, -1px);
+      background: rgba(255, 243, 220, 0.95);
+      box-shadow: 6px 6px 0 rgba(60, 45, 25, 0.18);
+    }
+
+    .choice:active {
+      transform: translate(1px, 1px);
+      box-shadow: 2px 2px 0 rgba(60, 45, 25, 0.18);
+    }
+
+    .status {
+      min-height: 126px;
+      border: 4px solid var(--ink);
+      padding: 16px;
+      background: rgba(248, 239, 214, 0.78);
+      display: grid;
+      gap: 8px;
+      align-content: start;
+    }
+
+    .status h2 {
+      margin: 0;
+      font-size: 1.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      text-align: center;
+    }
+
+    .status p {
+      margin: 0;
+      font-size: 1.05rem;
+      line-height: 1.45;
+      text-align: center;
+    }
+
+    .status.correct {
+      border-color: var(--correct);
+    }
+
+    .status.wrong {
+      border-color: var(--wrong);
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hud span {
+      padding: 8px 10px;
+      border: 2px solid rgba(44,36,24,0.6);
+      background: rgba(255,255,255,0.18);
+    }
+
+    .controls {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button.control {
+      border: 3px solid var(--ink);
+      background: #f3e5bf;
+      color: var(--ink);
+      padding: 12px 18px;
+      font-size: 1rem;
+      font-family: inherit;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 rgba(60, 45, 25, 0.18);
+    }
+
+    button.control:hover {
+      background: #fff0c8;
+    }
+
+    .footnote {
+      text-align: center;
+      font-size: 0.82rem;
+      opacity: 0.8;
+      border-top: 3px double var(--dark-gold);
+      padding: 14px 18px 18px;
+      letter-spacing: 0.03em;
+    }
+
+    @media (max-width: 720px) {
+      .choices {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <main class="screen" aria-label="Pedant game screen">
+      <header class="masthead">
+        <div class="tiny">A Literary Quiz for the Overconfident</div>
+        <h1>Pedant!</h1>
+        <div class="subtitle">Words from Public Domain Works · Snobbery Included</div>
+      </header>
+
+      <section class="content">
+        <div class="hud">
+          <span id="score">Score: 0</span>
+          <span id="round">Question: 1</span>
+          <span id="streak">Streak: 0</span>
+        </div>
+
+        <div class="intertitle">
+          <div class="question-number">Choose the Correct Answer, See?</div>
+          <p class="question" id="question">Loading question...</p>
+        </div>
+
+        <div class="choices" id="choices"></div>
+
+        <div class="status" id="statusBox">
+          <h2>Instructions</h2>
+          <p>
+            Answer each question with the proper word from classic public domain literature.
+            Miss one and you’ll be dressed down like a first-class dumbbell.
+            Get one right and you’ll receive a Prohibition cocktail.
+          </p>
+        </div>
+
+        <div class="controls">
+          <button class="control" id="nextBtn">Next Question</button>
+          <button class="control" id="restartBtn">Restart Picture</button>
+        </div>
+      </section>
+
+      <footer class="footnote">
+        Styled after a 1920s silent picture title card, with all answers drawn from public domain literature.
+      </footer>
+    </main>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        prompt: "In Poe’s famous poem, what single word does the raven repeat?",
+        choices: ["Nevermore", "Mooncalf", "Jabberwock", "Muggle"],
+        answer: "Nevermore",
+        source: "The Raven (1845)"
+      },
+      {
+        prompt: "What is the surname of Dickens’s famous miser Ebenezer?",
+        choices: ["Scrooge", "Gradgrind", "Pickwick", "Micawber"],
+        answer: "Scrooge",
+        source: "A Christmas Carol (1843)"
+      },
+      {
+        prompt: "Which boy of the jungle was raised by wolves?",
+        choices: ["Mowgli", "Cedric", "Jim", "Pip"],
+        answer: "Mowgli",
+        source: "The Jungle Book (1894)"
+      },
+      {
+        prompt: "What detective’s first name is Holmes?",
+        choices: ["Sherlock", "Roderick", "Phineas", "Bartholomew"],
+        answer: "Sherlock",
+        source: "Sherlock Holmes stories"
+      },
+      {
+        prompt: "What vessel does Captain Ahab pursue with fatal obsession?",
+        choices: ["Pequod", "Nautilus", "Hispaniola", "Beagle"],
+        answer: "Pequod",
+        source: "Moby-Dick (1851)"
+      },
+      {
+        prompt: "Who is the wild moor-haunting gentleman of Wuthering Heights?",
+        choices: ["Heathcliff", "Rochester", "Silas", "Dorian"],
+        answer: "Heathcliff",
+        source: "Wuthering Heights (1847)"
+      },
+      {
+        prompt: "What magical land is ruled by Oz?",
+        choices: ["Emerald", "Wonder", "Dinotopia", "Narnia"],
+        answer: "Emerald",
+        source: "The Wonderful Wizard of Oz (1900)"
+      },
+      {
+        prompt: "What is the name of Victor Frankenstein’s Swiss fiancée?",
+        choices: ["Elizabeth", "Cordelia", "Arabella", "Josephine"],
+        answer: "Elizabeth",
+        source: "Frankenstein (1818)"
+      },
+      {
+        prompt: "Which traveler races around the globe in eighty days?",
+        choices: ["Phileas", "Ishmael", "Lemuel", "Quixote"],
+        answer: "Phileas",
+        source: "Around the World in Eighty Days (1872)"
+      },
+      {
+        prompt: "What tiny girl tumbles through Wonderland after a rabbit?",
+        choices: ["Alice", "Wendy", "Pollyanna", "Rebecca"],
+        answer: "Alice",
+        source: "Alice’s Adventures in Wonderland (1865)"
+      }
+    ];
+
+    const insults = [
+      "Wrong, you blithering flat tire.",
+      "Say, that answer’s all wet, you bootleg numbskull.",
+      "Listen here, you palooka, that guess is bunk.",
+      "Nice work, you mooncalf. Absolutely applesauce.",
+      "You poor sap, that answer wouldn’t fool a newsboy.",
+      "Why, you dizzy dumbbell, the right word was staring at you.",
+      "That guess is the cat’s pajamas only if the cat is concussed.",
+      "Heavens to Betsy, what a hooey-ridden response.",
+      "You muttonhead, you’ve made a proper hash of it.",
+      "That’s a swell way to be wrong, you gold-plated nitwit."
+    ];
+
+    const cocktails = [
+      "Bee’s Knees — gin, lemon, and honey. The cat’s whiskers.",
+      "Southside — gin, mint, citrus, and enough charm to evade a raid.",
+      "Mary Pickford — rum, pineapple, grenadine, and movie-star mischief.",
+      "French 75 — gin, lemon, sugar, and champagne with a right hook.",
+      "Sidecar — brandy, orange liqueur, lemon, all sharp elbows and polish.",
+      "Monkey Gland — gin, orange juice, grenadine, and scandalous confidence.",
+      "Clover Club — gin, raspberry, lemon, egg white, elegant as sin.",
+      "Corpse Reviver No. 2 — a bracing little resurrection in a coupe.",
+      "Hanky Panky — gin, sweet vermouth, Fernet; sophisticated trouble.",
+      "Ward Eight — whiskey, citrus, grenadine; brisk and political."
+    ];
+
+    let remaining = [];
+    let currentQuestion = null;
+    let score = 0;
+    let streak = 0;
+    let round = 1;
+    let answered = false;
+
+    const questionEl = document.getElementById("question");
+    const choicesEl = document.getElementById("choices");
+    const statusBox = document.getElementById("statusBox");
+    const scoreEl = document.getElementById("score");
+    const roundEl = document.getElementById("round");
+    const streakEl = document.getElementById("streak");
+    const nextBtn = document.getElementById("nextBtn");
+    const restartBtn = document.getElementById("restartBtn");
+
+    function shuffle(array) {
+      const a = [...array];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    function randomItem(array) {
+      return array[Math.floor(Math.random() * array.length)];
+    }
+
+    function setStatus(title, body, type = "") {
+      statusBox.className = "status";
+      if (type) statusBox.classList.add(type);
+      statusBox.innerHTML = `
+        <h2>${title}</h2>
+        <p>${body}</p>
+      `;
+    }
+
+    function updateHud() {
+      scoreEl.textContent = `Score: ${score}`;
+      roundEl.textContent = `Question: ${round}`;
+      streakEl.textContent = `Streak: ${streak}`;
+    }
+
+    function loadQuestion() {
+      if (remaining.length === 0) {
+        remaining = shuffle(questions);
+      }
+
+      currentQuestion = remaining.pop();
+      answered = false;
+
+      questionEl.textContent = currentQuestion.prompt;
+      choicesEl.innerHTML = "";
+
+      currentQuestion.choices.forEach(choiceText => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.type = "button";
+        btn.textContent = choiceText;
+        btn.addEventListener("click", () => handleAnswer(choiceText, btn));
+        choicesEl.appendChild(btn);
+      });
+
+      setStatus(
+        "Make Your Selection",
+        "Mind your letters, mind your literature, and for pity’s sake don’t embarrass yourself."
+      );
+
+      updateHud();
+    }
+
+    function disableChoices() {
+      [...choicesEl.querySelectorAll(".choice")].forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = "0.82";
+        btn.style.cursor = "default";
+      });
+    }
+
+    function handleAnswer(choice, clickedBtn) {
+      if (answered) return;
+      answered = true;
+      disableChoices();
+
+      const correct = choice === currentQuestion.answer;
+      const allButtons = [...choicesEl.querySelectorAll(".choice")];
+
+      allButtons.forEach(btn => {
+        if (btn.textContent === currentQuestion.answer) {
+          btn.style.background = "rgba(201, 228, 190, 0.95)";
+          btn.style.borderColor = "#31492f";
+        } else if (btn === clickedBtn && !correct) {
+          btn.style.background = "rgba(241, 190, 181, 0.95)";
+          btn.style.borderColor = "#5a2b24";
+        }
+      });
+
+      if (correct) {
+        score += 1;
+        streak += 1;
+        const cocktail = randomItem(cocktails);
+        setStatus(
+          "Correct!",
+          `From <em>${currentQuestion.source}</em>, naturally. Reward yourself with a <strong>${cocktail}</strong>`,
+          "correct"
+        );
+      } else {
+        streak = 0;
+        const insult = randomItem(insults);
+        setStatus(
+          "Wrong!",
+          `${insult} The correct answer was <strong>${currentQuestion.answer}</strong>, from <em>${currentQuestion.source}</em>.`,
+          "wrong"
+        );
+      }
+
+      updateHud();
+    }
+
+    nextBtn.addEventListener("click", () => {
+      round += 1;
+      loadQuestion();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      remaining = shuffle(questions);
+      score = 0;
+      streak = 0;
+      round = 1;
+      loadQuestion();
+    });
+
+    remaining = shuffle(questions);
+    loadQuestion();
+  </script>
+</body>
+</html>
