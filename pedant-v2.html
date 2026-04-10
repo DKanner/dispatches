@@ -6,15 +6,16 @@
   <title>Pedant!</title>
   <style>
     :root {
-      --bg: #1c1711;
-      --paper: #d8c7a6;
-      --ink: #2c2418;
-      --frame: #8c7552;
-      --gold: #b1935a;
-      --dark-gold: #7c6541;
-      --correct: #31492f;
-      --wrong: #5a2b24;
-      --shadow: rgba(0,0,0,0.45);
+      --bg: #1a140d;
+      --paper: #d9c6a0;
+      --paper-2: #eadcbc;
+      --ink: #2a2117;
+      --frame: #8a7351;
+      --gold: #b3945b;
+      --gold-dark: #775f3d;
+      --correct: #30462f;
+      --wrong: #5f2e27;
+      --shadow: rgba(0, 0, 0, 0.45);
     }
 
     * {
@@ -25,11 +26,11 @@
       margin: 0;
       padding: 0;
       min-height: 100%;
-      font-family: "Georgia", "Times New Roman", serif;
       background:
         radial-gradient(circle at center, rgba(255, 240, 210, 0.08), transparent 45%),
-        linear-gradient(180deg, #241d15 0%, #120f0b 100%);
+        linear-gradient(180deg, #231b13 0%, #110d09 100%);
       color: var(--ink);
+      font-family: Georgia, "Times New Roman", serif;
       overflow-x: hidden;
     }
 
@@ -38,18 +39,18 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
+      z-index: 2;
       background:
         repeating-linear-gradient(
           to bottom,
           rgba(255,255,255,0.02) 0px,
           rgba(255,255,255,0.02) 2px,
-          rgba(0,0,0,0.02) 3px,
-          rgba(0,0,0,0.02) 4px
+          rgba(0,0,0,0.025) 3px,
+          rgba(0,0,0,0.025) 4px
         ),
         radial-gradient(circle at center, transparent 50%, rgba(0,0,0,0.45) 100%);
       mix-blend-mode: soft-light;
       animation: flicker 0.14s infinite steps(2);
-      z-index: 2;
     }
 
     body::after {
@@ -57,6 +58,8 @@
       position: fixed;
       inset: 0;
       pointer-events: none;
+      z-index: 3;
+      opacity: 0.14;
       background:
         linear-gradient(
           90deg,
@@ -66,9 +69,7 @@
           rgba(255,255,255,0.04) 52%,
           transparent 100%
         );
-      opacity: 0.15;
       animation: reel 8s linear infinite;
-      z-index: 3;
     }
 
     @keyframes flicker {
@@ -90,33 +91,29 @@
       min-height: 100vh;
       display: grid;
       place-items: center;
-      padding: 28px;
+      padding: 24px;
     }
 
     .screen {
-      width: min(950px, 100%);
+      width: min(980px, 100%);
+      border: 12px solid var(--frame);
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
       background:
         radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 42%),
-        linear-gradient(180deg, #e6d7b5 0%, #cdb78d 100%);
-      border: 12px solid var(--frame);
+        linear-gradient(180deg, #e5d5b1 0%, #ccb589 100%);
       box-shadow:
         0 24px 60px var(--shadow),
         inset 0 0 0 3px #eadabd,
         inset 0 0 40px rgba(60, 40, 20, 0.22);
-      border-radius: 10px;
-      position: relative;
-      overflow: hidden;
     }
 
-    .screen::before,
-    .screen::after {
+    .screen::before {
       content: "";
       position: absolute;
       inset: 0;
       pointer-events: none;
-    }
-
-    .screen::before {
       background:
         radial-gradient(circle at 20% 10%, rgba(255,255,255,0.15), transparent 25%),
         radial-gradient(circle at 75% 30%, rgba(255,255,255,0.08), transparent 20%),
@@ -131,44 +128,64 @@
     }
 
     .screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
       background: radial-gradient(circle at center, transparent 55%, rgba(0,0,0,0.28) 100%);
     }
 
     .masthead {
       text-align: center;
-      padding: 26px 24px 16px;
-      border-bottom: 3px double var(--dark-gold);
+      padding: 24px 20px 16px;
+      border-bottom: 3px double var(--gold-dark);
       position: relative;
     }
 
     .tiny {
+      margin-bottom: 8px;
       font-size: 0.8rem;
       letter-spacing: 0.16em;
       text-transform: uppercase;
       opacity: 0.78;
-      margin-bottom: 8px;
     }
 
     h1 {
       margin: 0;
       font-size: clamp(2.8rem, 8vw, 5.2rem);
       line-height: 0.95;
-      letter-spacing: 0.06em;
       text-transform: uppercase;
+      letter-spacing: 0.06em;
       text-shadow: 2px 2px 0 rgba(255,255,255,0.18);
     }
 
     .subtitle {
       margin-top: 10px;
-      font-size: 1rem;
+      font-size: 0.98rem;
       letter-spacing: 0.1em;
       text-transform: uppercase;
     }
 
     .content {
-      padding: 24px;
+      padding: 22px;
       display: grid;
       gap: 18px;
+    }
+
+    .hud {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      font-size: 0.95rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+
+    .hud span {
+      padding: 8px 10px;
+      border: 2px solid rgba(44,36,24,0.6);
+      background: rgba(255,255,255,0.18);
     }
 
     .intertitle {
@@ -176,7 +193,7 @@
       padding: 18px;
       background:
         linear-gradient(180deg, rgba(255,255,255,0.15), transparent),
-        rgba(245, 233, 202, 0.7);
+        rgba(245, 233, 202, 0.72);
       box-shadow: inset 0 0 0 2px rgba(255,255,255,0.25);
     }
 
@@ -189,10 +206,10 @@
     }
 
     .question {
-      font-size: clamp(1.25rem, 2.7vw, 1.9rem);
-      text-align: center;
       margin: 0;
-      line-height: 1.25;
+      font-size: clamp(1.22rem, 2.7vw, 1.9rem);
+      line-height: 1.28;
+      text-align: center;
     }
 
     .choices {
@@ -204,34 +221,39 @@
     .choice {
       appearance: none;
       border: 3px solid var(--ink);
-      background: rgba(245, 236, 211, 0.82);
+      background: rgba(245, 236, 211, 0.84);
       padding: 14px 16px;
-      font-size: 1.05rem;
+      font-size: 1.02rem;
       font-family: inherit;
-      cursor: pointer;
       color: var(--ink);
       text-transform: uppercase;
       letter-spacing: 0.04em;
+      cursor: pointer;
       box-shadow: 4px 4px 0 rgba(60, 45, 25, 0.18);
       transition: transform 120ms ease, background 120ms ease, box-shadow 120ms ease;
     }
 
-    .choice:hover {
+    .choice:hover:not(:disabled) {
       transform: translate(-1px, -1px);
       background: rgba(255, 243, 220, 0.95);
       box-shadow: 6px 6px 0 rgba(60, 45, 25, 0.18);
     }
 
-    .choice:active {
+    .choice:active:not(:disabled) {
       transform: translate(1px, 1px);
       box-shadow: 2px 2px 0 rgba(60, 45, 25, 0.18);
+    }
+
+    .choice:disabled {
+      opacity: 0.88;
+      cursor: default;
     }
 
     .status {
       min-height: 126px;
       border: 4px solid var(--ink);
       padding: 16px;
-      background: rgba(248, 239, 214, 0.78);
+      background: rgba(248, 239, 214, 0.8);
       display: grid;
       gap: 8px;
       align-content: start;
@@ -239,7 +261,7 @@
 
     .status h2 {
       margin: 0;
-      font-size: 1.4rem;
+      font-size: 1.35rem;
       text-transform: uppercase;
       letter-spacing: 0.08em;
       text-align: center;
@@ -264,22 +286,6 @@
       border-color: var(--gold);
     }
 
-    .hud {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      flex-wrap: wrap;
-      font-size: 0.95rem;
-      text-transform: uppercase;
-      letter-spacing: 0.08em;
-    }
-
-    .hud span {
-      padding: 8px 10px;
-      border: 2px solid rgba(44,36,24,0.6);
-      background: rgba(255,255,255,0.18);
-    }
-
     .controls {
       display: flex;
       justify-content: center;
@@ -287,7 +293,7 @@
       flex-wrap: wrap;
     }
 
-    button.control {
+    .control {
       border: 3px solid var(--ink);
       background: #f3e5bf;
       color: var(--ink);
@@ -300,11 +306,11 @@
       box-shadow: 4px 4px 0 rgba(60, 45, 25, 0.18);
     }
 
-    button.control:hover {
+    .control:hover:not(:disabled) {
       background: #fff0c8;
     }
 
-    button.control:disabled {
+    .control:disabled {
       opacity: 0.55;
       cursor: not-allowed;
     }
@@ -313,7 +319,7 @@
       text-align: center;
       font-size: 0.82rem;
       opacity: 0.8;
-      border-top: 3px double var(--dark-gold);
+      border-top: 3px double var(--gold-dark);
       padding: 14px 18px 18px;
       letter-spacing: 0.03em;
     }
@@ -331,7 +337,7 @@
       <header class="masthead">
         <div class="tiny">A Literary Quiz for the Overconfident</div>
         <h1>Pedant!</h1>
-        <div class="subtitle">Public Domain Wordplay · Prohibition Rewards · Proper Contempt</div>
+        <div class="subtitle">Public Domain Wordplay · Prohibition Rewards · Period-Accurate Contempt</div>
       </header>
 
       <section class="content">
@@ -353,8 +359,8 @@
           <h2>Instructions</h2>
           <p>
             Each question has one correct answer from public domain literature.
-            The answer positions are shuffled each round. Questions will not repeat
-            until the entire 100-question bank has been exhausted.
+            The answers are shuffled each round. No repeats until all one hundred
+            questions have been answered, see?
           </p>
         </div>
 
@@ -365,7 +371,7 @@
       </section>
 
       <footer class="footnote">
-        Silent-picture styling. Literary smugness. Medicinal cocktails. America improves itself.
+        Styled after a 1920s title card. All questions drawn from public domain works.
       </footer>
     </main>
   </div>
@@ -396,7 +402,7 @@
 
       { prompt: "What is the surname of Jane in Jane Eyre?", answer: "Eyre", distractors: ["Snowe", "Reed", "Temple"], source: "Jane Eyre (1847)" },
       { prompt: "What school does Tom Brown attend?", answer: "Rugby", distractors: ["Eton", "Oxford", "Salem"], source: "Tom Brown’s School Days (1857)" },
-      { prompt: "What is the first name of Captain Nemo’s submarine?", answer: "Nautilus", distractors: ["Argonaut", "Leviathan", "Tempest"], source: "Twenty Thousand Leagues Under the Seas (1870)" },
+      { prompt: "What is the name of Captain Nemo’s submarine?", answer: "Nautilus", distractors: ["Argonaut", "Leviathan", "Tempest"], source: "Twenty Thousand Leagues Under the Seas (1870)" },
       { prompt: "What is the surname of Dorian in Wilde’s novel?", answer: "Gray", distractors: ["Black", "White", "Green"], source: "The Picture of Dorian Gray (1890)" },
       { prompt: "What relation is Uncle Tom to slavery narratives?", answer: "Bondman", distractors: ["Senator", "Sheriff", "Editor"], source: "Uncle Tom’s Cabin (1852)" },
       { prompt: "What animal is Black Beauty?", answer: "Horse", distractors: ["Dog", "Raven", "Fox"], source: "Black Beauty (1877)" },
@@ -441,15 +447,14 @@
       { prompt: "What bird is central to Coleridge’s cursed voyage?", answer: "Albatross", distractors: ["Raven", "Heron", "Sparrow"], source: "The Rime of the Ancient Mariner (1798)" },
       { prompt: "What city is the setting of The Scarlet Letter?", answer: "Boston", distractors: ["Salem", "Concord", "Hartford"], source: "The Scarlet Letter (1850)" },
       { prompt: "What letter does Hester Prynne wear?", answer: "A", distractors: ["B", "S", "R"], source: "The Scarlet Letter (1850)" },
-      { prompt: "What is the surname of Captain Blood?", answer: "Blood", distractors: ["Drake", "Morgan", "Flint"], source: "Captain Blood (1922 is not PD everywhere; remove? no" },
-      { prompt: "What animal leads Ichabod Crane’s fears?", answer: "Horseman", distractors: ["Wolf", "Raven", "Hound"], source: "The Legend of Sleepy Hollow (1820)" },
+      { prompt: "What object does the Headless Horseman famously carry?", answer: "Pumpkin", distractors: ["Lantern", "Saber", "Skull"], source: "The Legend of Sleepy Hollow (1820)" },
       { prompt: "What hollow is haunted in Irving’s tale?", answer: "Sleepy", distractors: ["Howling", "Foggy", "Crooked"], source: "The Legend of Sleepy Hollow (1820)" },
       { prompt: "What occupation belongs to Rip Van Winkle before his long nap?", answer: "Villager", distractors: ["Printer", "Lawman", "Sailor"], source: "Rip Van Winkle (1819)" },
       { prompt: "What does Rip Van Winkle famously do for years?", answer: "Sleep", distractors: ["Wander", "Fish", "Hide"], source: "Rip Van Winkle (1819)" },
       { prompt: "What is the first name of Captain Wentworth’s love in Persuasion?", answer: "Anne", distractors: ["Emma", "Elinor", "Fanny"], source: "Persuasion (1818)" },
       { prompt: "What estate gives Mansfield Park its title?", answer: "Mansfield", distractors: ["Netherfield", "Pemberley", "Donwell"], source: "Mansfield Park (1814)" },
-
       { prompt: "What is the surname of Fanny in Mansfield Park?", answer: "Price", distractors: ["Bates", "Weston", "Lucas"], source: "Mansfield Park (1814)" },
+
       { prompt: "What splendid estate belongs to Darcy?", answer: "Pemberley", distractors: ["Netherfield", "Rosings", "Kellynch"], source: "Pride and Prejudice (1813)" },
       { prompt: "What relation is Mr. Collins to the Bennets’ inheritance?", answer: "Heir", distractors: ["Tenant", "Clerk", "Rival"], source: "Pride and Prejudice (1813)" },
       { prompt: "What is the surname of the sisters in Sense and Sensibility?", answer: "Dashwood", distractors: ["Ferrars", "Steele", "Jennings"], source: "Sense and Sensibility (1811)" },
@@ -459,19 +464,19 @@
       { prompt: "What hall becomes Jane’s governess post?", answer: "Thornfield", distractors: ["Lowood", "Ferndean", "Marsh"], source: "Jane Eyre (1847)" },
       { prompt: "What name belongs to Rochester’s hidden wife?", answer: "Bertha", distractors: ["Blanche", "Diana", "Helen"], source: "Jane Eyre (1847)" },
       { prompt: "What orphaned boy meets the Artful Dodger?", answer: "Oliver", distractors: ["David", "Pip", "Nicholas"], source: "Oliver Twist (1838)" },
-
       { prompt: "What cruel schoolmaster torments Nicholas Nickleby’s world?", answer: "Squeers", distractors: ["Heep", "Murdstone", "Creakle"], source: "Nicholas Nickleby (1839)" },
+
       { prompt: "What oily clerk stalks David Copperfield?", answer: "Heep", distractors: ["Squeers", "Wemmick", "Peggotty"], source: "David Copperfield (1850)" },
       { prompt: "What is the surname of David in Copperfield?", answer: "Copperfield", distractors: ["Micawber", "Murdstone", "Traddles"], source: "David Copperfield (1850)" },
       { prompt: "What kindly but disastrous optimist befriends David?", answer: "Micawber", distractors: ["Heep", "Peggotty", "Steerforth"], source: "David Copperfield (1850)" },
       { prompt: "What Christmas spirit shows Ebenezer the past?", answer: "Past", distractors: ["Future", "Present", "Penance"], source: "A Christmas Carol (1843)" },
       { prompt: "What other spirit shows him what is yet to come?", answer: "Future", distractors: ["Mercy", "Charity", "Judgment"], source: "A Christmas Carol (1843)" },
-      { prompt: "What employee says ‘Bah! Humbug!’?", answer: "Scrooge", distractors: ["Cratchit", "Fred", "Marley"], source: "A Christmas Carol (1843)" },
+      { prompt: "What employee says 'Bah! Humbug!'?", answer: "Scrooge", distractors: ["Cratchit", "Fred", "Marley"], source: "A Christmas Carol (1843)" },
       { prompt: "What surname belongs to Scrooge’s clerk Bob?", answer: "Cratchit", distractors: ["Marley", "Fezziwig", "Jorkins"], source: "A Christmas Carol (1843)" },
       { prompt: "What adjective often describes Tiny Tim?", answer: "Tiny", distractors: ["Lame", "Golden", "Merry"], source: "A Christmas Carol (1843)" },
       { prompt: "What name belongs to Scrooge’s deceased partner?", answer: "Marley", distractors: ["Cratchit", "Fezziwig", "Wegg"], source: "A Christmas Carol (1843)" },
-
       { prompt: "What seafaring boy is central to Treasure Island?", answer: "Jim", distractors: ["Tom", "Ben", "Nat"], source: "Treasure Island (1883)" },
+
       { prompt: "What one-legged pirate menaces Treasure Island?", answer: "Silver", distractors: ["Flint", "Bones", "Pew"], source: "Treasure Island (1883)" },
       { prompt: "What title precedes Jekyll’s name?", answer: "Doctor", distractors: ["Professor", "Captain", "Reverend"], source: "Strange Case of Dr Jekyll and Mr Hyde (1886)" },
       { prompt: "What is the surname of lawyer Gabriel John Utterson’s friend Henry?", answer: "Jekyll", distractors: ["Hyde", "Enfield", "Lanyon"], source: "Strange Case of Dr Jekyll and Mr Hyde (1886)" },
@@ -481,8 +486,8 @@
       { prompt: "What river carries Huck and Jim?", answer: "Mississippi", distractors: ["Hudson", "Ohio", "Missouri"], source: "Adventures of Huckleberry Finn (1884)" },
       { prompt: "What relation is Jim to Huck’s escape story?", answer: "Companion", distractors: ["Constable", "Widow", "Judge"], source: "Adventures of Huckleberry Finn (1884)" },
       { prompt: "What island is central to The Tempest?", answer: "Island", distractors: ["Harbor", "Castle", "Province"], source: "The Tempest" },
-
       { prompt: "What beast does Beauty love despite appearances?", answer: "Beast", distractors: ["Wolf", "Prince", "Lion"], source: "Beauty and the Beast" },
+
       { prompt: "What girl meets seven dwarfs?", answer: "Snow", distractors: ["Rose", "Pearl", "May"], source: "Snow White" },
       { prompt: "What girl loses a slipper at the ball?", answer: "Cinderella", distractors: ["Rapunzel", "Briar", "Elaine"], source: "Cinderella" },
       { prompt: "What sleeper pricks her finger in the fairy tale?", answer: "Beauty", distractors: ["Alice", "Wendy", "Dorothy"], source: "Sleeping Beauty" },
@@ -492,26 +497,19 @@
       { prompt: "What pirate captain opposes Peter Pan?", answer: "Hook", distractors: ["Silver", "Flint", "Bones"], source: "Peter and Wendy (1911)" },
       { prompt: "What girl flies away from the nursery?", answer: "Wendy", distractors: ["Jane", "Alice", "Edith"], source: "Peter and Wendy (1911)" },
       { prompt: "What magical place do the children fly to?", answer: "Neverland", distractors: ["Wonderland", "Oz", "Avalon"], source: "Peter and Wendy (1911)" },
+      { prompt: "What dog leads London’s northern tale The Call of the Wild?", answer: "Buck", distractors: ["Fang", "White", "Jerry"], source: "The Call of the Wild (1903)" },
 
-      { prompt: "What dog returns home in Call of the Wild’s companion novel?", answer: "Buck", distractors: ["Fang", "White", "Jerry"], source: "The Call of the Wild (1903)" },
-      { prompt: "What wild canine title belongs to London’s northern novel?", answer: "Call", distractors: ["Cry", "Howl", "Song"], source: "The Call of the Wild (1903)" },
+      { prompt: "What one-word title names London’s northern novel?", answer: "Call", distractors: ["Cry", "Howl", "Song"], source: "The Call of the Wild (1903)" },
       { prompt: "What white northern canine is London’s later hero?", answer: "Fang", distractors: ["Buck", "Claw", "Ghost"], source: "White Fang (1906)" },
       { prompt: "What color is Fang?", answer: "White", distractors: ["Black", "Gray", "Red"], source: "White Fang (1906)" },
       { prompt: "What is the surname of Pollyanna?", answer: "Whittier", distractors: ["Blythe", "March", "Shirley"], source: "Pollyanna (1913)" },
       { prompt: "What quality is Pollyanna famous for?", answer: "Gladness", distractors: ["Pride", "Cunning", "Silence"], source: "Pollyanna (1913)" },
-      { prompt: "What tree is green in Anne of Green Gables’ title place?", answer: "Gables", distractors: ["Pines", "Birches", "Cedars"], source: "Anne of Green Gables (1908)" },
+      { prompt: "What architectural feature appears in Anne of Green Gables’ title place?", answer: "Gables", distractors: ["Pines", "Birches", "Cedars"], source: "Anne of Green Gables (1908)" },
       { prompt: "What is Anne’s favorite adjective for beautiful things?", answer: "Lovely", distractors: ["Practical", "Useful", "Orderly"], source: "Anne of Green Gables (1908)" },
       { prompt: "What first name belongs to Pollyanna?", answer: "Pollyanna", distractors: ["Rebecca", "Emily", "Betsy"], source: "Pollyanna (1913)" },
-      { prompt: "What is the surname of Rebecca of Sunnybrook Farm?", answer: "Randall", distractors: ["Rowena", "West", "Sawyer"], source: "Rebecca of Sunnybrook Farm (1903)" }
+      { prompt: "What is the surname of Rebecca of Sunnybrook Farm?", answer: "Randall", distractors: ["Rowena", "West", "Sawyer"], source: "Rebecca of Sunnybrook Farm (1903)" },
+      { prompt: "What farm appears in Rebecca’s title?", answer: "Sunnybrook", distractors: ["Pinecrest", "Riverbend", "Thornacre"], source: "Rebecca of Sunnybrook Farm (1903)" }
     ];
-
-    // Replace the one malformed/non-PD-safe prompt if desired:
-    questions[64] = {
-      prompt: "What object does the Headless Horseman famously carry?",
-      answer: "Pumpkin",
-      distractors: ["Lantern", "Saber", "Skull"],
-      source: "The Legend of Sleepy Hollow (1820)"
-    };
 
     const insults = [
       "Wrong, you blithering flat tire.",
@@ -551,7 +549,6 @@
     let answered = false;
     let score = 0;
     let streak = 0;
-    let questionNumber = 0;
     let answeredIds = new Set();
 
     const questionEl = document.getElementById("question");
@@ -596,5 +593,152 @@
     }
 
     function updateHud() {
+      const total = questions.length;
+      const answeredCount = answeredIds.size;
+      const displayQuestion = answeredCount >= total ? total : answeredCount + 1;
+
       scoreEl.textContent = `Score: ${score}`;
-      roundEl.textContent = `Question: ${Math.min(questionNumber + 1, questions.length)} / ${questions.length}`;
+      roundEl.textContent = `Question: ${displayQuestion} / ${total}`;
+      streakEl.textContent = `Streak: ${streak}`;
+      remainingEl.textContent = `Remaining: ${total - answeredCount}`;
+    }
+
+    function disableChoices() {
+      [...choicesEl.querySelectorAll(".choice")].forEach(btn => {
+        btn.disabled = true;
+      });
+    }
+
+    function finishGame() {
+      const total = questions.length;
+      const pct = Math.round((score / total) * 100);
+
+      let judgment = "Not bad, professor.";
+      if (pct === 100) judgment = "Perfect. Intolerable, but perfect.";
+      else if (pct >= 90) judgment = "A menace to error everywhere.";
+      else if (pct >= 75) judgment = "Disturbingly well read.";
+      else if (pct >= 50) judgment = "Adequate. Barely.";
+      else judgment = "Frankly, the insults wrote themselves.";
+
+      questionEl.textContent = "You have exhausted the Pedant! question bank.";
+      choicesEl.innerHTML = "";
+      nextBtn.disabled = true;
+
+      setStatus(
+        "The Picture Concludes",
+        `You answered all ${total} questions. Final score: <strong>${score}/${total}</strong>. ${judgment} Hit “Restart Picture” to reshuffle the full bank and begin again.`,
+        "finished"
+      );
+
+      updateHud();
+    }
+
+    function loadQuestion() {
+      if (answeredIds.size >= questions.length || queue.length === 0) {
+        finishGame();
+        return;
+      }
+
+      currentQuestion = queue.pop();
+      answered = false;
+
+      const options = shuffle([
+        currentQuestion.answer,
+        ...currentQuestion.distractors
+      ]);
+
+      questionEl.textContent = currentQuestion.prompt;
+      choicesEl.innerHTML = "";
+
+      options.forEach(choiceText => {
+        const btn = document.createElement("button");
+        btn.className = "choice";
+        btn.type = "button";
+        btn.textContent = choiceText;
+        btn.addEventListener("click", () => handleAnswer(choiceText, btn));
+        choicesEl.appendChild(btn);
+      });
+
+      setStatus(
+        "Make Your Selection",
+        "The answers have been shuffled. No more cheap pattern-mining, you little ferret."
+      );
+
+      updateHud();
+      nextBtn.disabled = false;
+    }
+
+    function handleAnswer(choice, clickedBtn) {
+      if (answered || !currentQuestion) return;
+      answered = true;
+
+      disableChoices();
+      answeredIds.add(currentQuestion.id);
+
+      const isCorrect = choice === currentQuestion.answer;
+      const allButtons = [...choicesEl.querySelectorAll(".choice")];
+
+      allButtons.forEach(btn => {
+        if (btn.textContent === currentQuestion.answer) {
+          btn.style.background = "rgba(201, 228, 190, 0.95)";
+          btn.style.borderColor = "#31492f";
+        } else if (btn === clickedBtn && !isCorrect) {
+          btn.style.background = "rgba(241, 190, 181, 0.95)";
+          btn.style.borderColor = "#5f2e27";
+        }
+      });
+
+      if (isCorrect) {
+        score += 1;
+        streak += 1;
+        const cocktail = randomItem(cocktails);
+        setStatus(
+          "Correct!",
+          `From <em>${currentQuestion.source}</em>, naturally. Your reward: <strong>${cocktail}</strong>`,
+          "correct"
+        );
+      } else {
+        streak = 0;
+        const insult = randomItem(insults);
+        setStatus(
+          "Wrong!",
+          `${insult} The correct answer was <strong>${currentQuestion.answer}</strong>, from <em>${currentQuestion.source}</em>.`,
+          "wrong"
+        );
+      }
+
+      updateHud();
+
+      if (answeredIds.size >= questions.length) {
+        nextBtn.disabled = true;
+        setTimeout(finishGame, 250);
+      }
+    }
+
+    nextBtn.addEventListener("click", () => {
+      if (currentQuestion && !answeredIds.has(currentQuestion.id)) {
+        setStatus(
+          "No Dodging",
+          "Answer the current question before moving on, you evasive cornflower."
+        );
+        return;
+      }
+      loadQuestion();
+    });
+
+    restartBtn.addEventListener("click", () => {
+      score = 0;
+      streak = 0;
+      answered = false;
+      currentQuestion = null;
+      answeredIds = new Set();
+      buildQueue();
+      nextBtn.disabled = false;
+      loadQuestion();
+    });
+
+    buildQueue();
+    loadQuestion();
+  </script>
+</body>
+</html>
