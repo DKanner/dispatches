@@ -1,0 +1,306 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The LepreCohen Blesses You</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Crimson+Pro:ital,wght@0,300;0,400;1,300&family=Permanent+Marker&display=swap');
+
+  :root {
+    --emerald: #2d6a3f;
+    --deep-green: #1a3d28;
+    --gold: #c9a227;
+    --beard-red: #b5411a;
+    --scroll-cream: #e8dcc8;
+    --city-gray: #3a3f4a;
+    --sky: #6b8cae;
+    --rainbow-red: #d94040;
+    --rainbow-orange: #e8893a;
+    --rainbow-yellow: #e8d44d;
+    --rainbow-green: #4fc96b;
+    --rainbow-blue: #4da6e8;
+    --rainbow-purple: #9b59b6;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--deep-green);
+    color: var(--scroll-cream);
+    font-family: 'Crimson Pro', serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  .grain {
+    position: fixed; inset: 0; pointer-events: none; z-index: 999;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+    opacity: 0.4;
+  }
+
+  .container {
+    max-width: 680px;
+    margin: 0 auto;
+    padding: 3rem 1.5rem 4rem;
+    position: relative;
+  }
+
+  h1 {
+    font-family: 'Permanent Marker', cursive;
+    font-size: clamp(2.2rem, 6vw, 3.4rem);
+    text-align: center;
+    color: var(--gold);
+    text-shadow: 2px 3px 0 rgba(0,0,0,0.3);
+    margin-bottom: 0.3rem;
+    animation: fadeDown 1s ease-out;
+  }
+
+  .subtitle {
+    text-align: center;
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--sky);
+    margin-bottom: 2.5rem;
+    opacity: 0;
+    animation: fadeDown 1s ease-out 0.3s forwards;
+  }
+
+  .scroll-card {
+    background: linear-gradient(145deg, var(--scroll-cream) 0%, #d4c8b0 100%);
+    color: var(--city-gray);
+    border-radius: 6px;
+    padding: 2.5rem 2rem;
+    position: relative;
+    box-shadow: 0 12px 40px rgba(0,0,0,0.4), inset 0 1px 0 rgba(255,255,255,0.3);
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 0.6s forwards;
+  }
+
+  .scroll-card::before {
+    content: '';
+    position: absolute;
+    top: 8px; left: 8px; right: 8px; bottom: 8px;
+    border: 1.5px solid var(--emerald);
+    border-radius: 3px;
+    pointer-events: none;
+    opacity: 0.3;
+  }
+
+  .letter-text {
+    font-size: 1.1rem;
+    line-height: 1.75;
+    font-weight: 300;
+  }
+
+  .letter-text p { margin-bottom: 1rem; }
+
+  .letter-text .sig {
+    font-family: 'Permanent Marker', cursive;
+    color: var(--emerald);
+    font-size: 1.3rem;
+    margin-top: 1.5rem;
+  }
+
+  .rainbow-divider {
+    height: 4px;
+    margin: 2.5rem 0;
+    background: linear-gradient(90deg, var(--rainbow-red), var(--rainbow-orange), var(--rainbow-yellow), var(--rainbow-green), var(--rainbow-blue), var(--rainbow-purple));
+    border-radius: 2px;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 1s forwards;
+  }
+
+  .bless-section {
+    text-align: center;
+    opacity: 0;
+    animation: fadeUp 0.8s ease-out 1.2s forwards;
+  }
+
+  .bless-section p {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.1rem;
+    margin-bottom: 1.5rem;
+    color: var(--scroll-cream);
+    opacity: 0.8;
+  }
+
+  .bless-btn {
+    font-family: 'Permanent Marker', cursive;
+    font-size: 1.3rem;
+    padding: 1rem 2.5rem;
+    background: linear-gradient(135deg, var(--emerald), var(--deep-green));
+    color: var(--gold);
+    border: 2px solid var(--gold);
+    border-radius: 50px;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .bless-btn:hover {
+    transform: scale(1.06);
+    box-shadow: 0 0 25px rgba(201,162,39,0.4);
+  }
+
+  .bless-btn:active { transform: scale(0.97); }
+
+  .blessing-output {
+    margin-top: 2rem;
+    min-height: 80px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .blessing-bubble {
+    background: linear-gradient(135deg, rgba(45,106,63,0.15), rgba(107,140,174,0.1));
+    border: 1px solid rgba(201,162,39,0.3);
+    border-radius: 12px;
+    padding: 1.5rem 2rem;
+    max-width: 560px;
+    animation: blessPop 0.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+    position: relative;
+  }
+
+  .blessing-bubble .quote {
+    font-family: 'Playfair Display', serif;
+    font-style: italic;
+    font-size: 1.15rem;
+    color: var(--gold);
+    line-height: 1.6;
+  }
+
+  .blessing-bubble .attribution {
+    font-family: 'Crimson Pro', serif;
+    font-size: 0.85rem;
+    color: var(--sky);
+    margin-top: 0.7rem;
+    opacity: 0.7;
+  }
+
+  .sparkles {
+    position: fixed;
+    pointer-events: none;
+    z-index: 998;
+  }
+
+  .sparkle {
+    position: fixed;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    pointer-events: none;
+    animation: sparkleFloat 1.2s ease-out forwards;
+  }
+
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes blessPop {
+    from { opacity: 0; transform: scale(0.85); }
+    to { opacity: 1; transform: scale(1); }
+  }
+  @keyframes sparkleFloat {
+    0% { opacity: 1; transform: translate(0, 0) scale(1); }
+    100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0); }
+  }
+
+  .counter {
+    text-align: center;
+    margin-top: 1rem;
+    font-size: 0.85rem;
+    color: var(--sky);
+    opacity: 0.5;
+  }
+</style>
+</head>
+<body>
+<div class="grain"></div>
+<div class="container">
+  <h1>🍀✡️ The LepreCohen Blesses You ✡️🍀</h1>
+  <div class="subtitle">A Reverse Birthday Card — A Thank You for the Thank You</div>
+
+  <div class="scroll-card">
+    <div class="letter-text">
+      <p>It is written — well, it's being written right now — that when someone blesses you on your birthday, you're supposed to bless them back. That's not Hallmark. That's Torah. The blessing isn't a transaction, it's a circuit. You completed it. The LepreCohen notices these things.</p>
+      <p>Thirty-five years walking this earth. The scroll has been unrolled at the Grove Street station, the beard is spiritually present, and the ancient words rise like rainbow smoke from parchment: <strong>you are seen, you are thanked, you are good.</strong></p>
+      <p>Not "good" the way a card says good. Good the way Abraham welcomed strangers at the tent — with urgency, with real food, without asking first whether they deserved it. You showed up. That's the whole mitzvah. No triumphant orchestra. Just you, doing the quiet thing that actually matters.</p>
+      <p>May the One who blessed our ancestors bless you too — sideways, through humor, the way real holiness sneaks in when you're not performing it.</p>
+      <p class="sig">— Donny, a.k.a. The LepreCohen ✡️📜🌈</p>
+    </div>
+  </div>
+
+  <div class="rainbow-divider"></div>
+
+  <div class="bless-section">
+    <p>The scroll is glowing. You should probably press the button.</p>
+    <button class="bless-btn" onclick="bless()">📜✡️ Receive a Blessing ✡️📜</button>
+    <div class="blessing-output" id="output"></div>
+    <div class="counter" id="counter"></div>
+  </div>
+</div>
+
+<script>
+const blessings = [
+  { quote: "God told Abram: 'Go forth.' Not 'go forth once you've got a plan.' May you leave the land you know before the GPS kicks in.", attr: "📜 after Genesis 12:1" },
+  { quote: "It is not good for man to be alone — so may the people who showed up for you today never underestimate how much that mattered.", attr: "📜 after Genesis 2:18" },
+  { quote: "Jacob wrestled an angel all night and walked away limping but blessed. May your struggles leave you renamed, not just sore.", attr: "📜 after Genesis 32:26-29" },
+  { quote: "Moses said 'I am slow of speech.' God said 'I'll be with your mouth.' May your best words find you even when you're not looking for them.", attr: "📜 after Exodus 4:10-12" },
+  { quote: "The manna fell daily. You couldn't hoard it. May you trust that tomorrow's portion is already on its way.", attr: "📜 after Exodus 16:4" },
+  { quote: "Love your neighbor as yourself — which means you have to love yourself first. That's not a loophole, that's the prerequisite.", attr: "📜 after Leviticus 19:18" },
+  { quote: "Abraham ran to greet three strangers in the heat of the day. May you always have that urgency for kindness — and also something good to serve.", attr: "📜 after Genesis 18:2" },
+  { quote: "The Torah says 'choose life.' Not 'optimize life.' Not 'curate life.' Just choose it. Today you chose it. Dayenu.", attr: "📜 after Deuteronomy 30:19" },
+  { quote: "Noah was righteous in his generation. The bar was low and he cleared it. May you clear whatever bar is in front of you today.", attr: "📜 after Genesis 6:9" },
+  { quote: "The burning bush was not consumed. May whatever's on fire in your life keep burning without burning you out.", attr: "📜 after Exodus 3:2" },
+  { quote: "Joseph told his brothers: 'You meant it for evil, but God meant it for good.' May your worst detours become your best origin stories.", attr: "📜 after Genesis 50:20" },
+  { quote: "Six days you shall work, and the seventh you shall rest. Not 'earn rest.' Not 'deserve rest.' Shall. May you rest like it's a commandment — because it is.", attr: "📜 after Exodus 20:9-10" },
+  { quote: "The sea didn't split until Nachshon walked in up to his nose. May you walk in before the miracle shows up.", attr: "📜 after Exodus 14:22 (with midrash)" },
+  { quote: "May the Lord bless you and keep you. May His face shine upon you. And may you have the good sense to stand in the light when it does.", attr: "📜 after Numbers 6:24-26" },
+  { quote: "It is not in heaven — the Torah is right here, in your mouth and in your heart. May you stop looking up for what's already inside you.", attr: "📜 after Deuteronomy 30:12-14" },
+];
+
+let count = 0;
+let lastIndex = -1;
+
+function bless() {
+  let idx;
+  do { idx = Math.floor(Math.random() * blessings.length); } while (idx === lastIndex && blessings.length > 1);
+  lastIndex = idx;
+  count++;
+
+  const b = blessings[idx];
+  const output = document.getElementById('output');
+  output.innerHTML = `<div class="blessing-bubble"><div class="quote">✡️📜 "${b.quote}" 📜✡️</div><div class="attribution">${b.attr}</div></div>`;
+
+  document.getElementById('counter').textContent = count === 1 ? '1 blessing received' : `${count} blessings received — the scroll is generous`;
+
+  // sparkles
+  const colors = ['#d94040','#e8893a','#e8d44d','#4fc96b','#4da6e8','#9b59b6','#c9a227'];
+  for (let i = 0; i < 18; i++) {
+    const s = document.createElement('div');
+    s.className = 'sparkle';
+    const rect = document.querySelector('.bless-btn').getBoundingClientRect();
+    s.style.left = (rect.left + rect.width/2) + 'px';
+    s.style.top = (rect.top + rect.height/2) + 'px';
+    s.style.background = colors[Math.floor(Math.random()*colors.length)];
+    const angle = (Math.PI*2/18)*i + Math.random()*0.3;
+    const dist = 60 + Math.random()*80;
+    s.style.setProperty('--dx', Math.cos(angle)*dist + 'px');
+    s.style.setProperty('--dy', Math.sin(angle)*dist + 'px');
+    s.style.width = (4+Math.random()*6) + 'px';
+    s.style.height = s.style.width;
+    document.body.appendChild(s);
+    setTimeout(() => s.remove(), 1300);
+  }
+}
+</script>
+</body>
+</html>
