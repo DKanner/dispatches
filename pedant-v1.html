@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedant! - A 1920s Trivia Game</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Bodoni+Moda:ital,opsz,wght@0,6..96,400..900;1,6..96,400..900&family=Playfair+Display:ital,wght@0,400..900;1,400..900&display=swap');
+
+        :root {
+            --paper: #e8e2d2;
+            --ink: #1a1a1a;
+        }
+
+        body {
+            background-color: #000;
+            color: var(--paper);
+            font-family: 'Bodoni Moda', serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            overflow: hidden;
+        }
+
+        /* Old Film Grain/Flicker Effect */
+        body::after {
+            content: "";
+            position: fixed;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: url('https://www.transparenttextures.com/patterns/stardust.png');
+            opacity: 0.05;
+            pointer-events: none;
+            animation: flicker 0.15s infinite;
+        }
+
+        @keyframes flicker {
+            0% { opacity: 0.05; }
+            50% { opacity: 0.08; }
+            100% { opacity: 0.04; }
+        }
+
+        #game-container {
+            width: 80%;
+            max-width: 800px;
+            border: 10px double var(--paper);
+            padding: 40px;
+            text-align: center;
+            background-color: var(--ink);
+            box-shadow: 0 0 50px rgba(232, 226, 210, 0.1);
+            position: relative;
+        }
+
+        h1 {
+            font-size: 4rem;
+            text-transform: uppercase;
+            letter-spacing: 10px;
+            margin-top: 0;
+            border-bottom: 2px solid var(--paper);
+            display: inline-block;
+            padding-bottom: 10px;
+        }
+
+        #question-text {
+            font-size: 1.8rem;
+            margin: 40px 0;
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        .options-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        button {
+            background: transparent;
+            color: var(--paper);
+            border: 2px solid var(--paper);
+            padding: 15px;
+            font-size: 1.2rem;
+            font-family: 'Playfair Display', serif;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        button:hover {
+            background: var(--paper);
+            color: var(--ink);
+        }
+
+        #feedback-screen {
+            display: none;
+            position: absolute;
+            top: 0; left: 0;
+            width: 100%; height: 100%;
+            background: var(--ink);
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 10;
+        }
+
+        .feedback-text {
+            font-size: 2.5rem;
+            margin-bottom: 20px;
+            padding: 0 20px;
+        }
+
+        .next-btn {
+            margin-top: 30px;
+            text-transform: uppercase;
+        }
+    </style>
+</head>
+<body>
+
+    <div id="game-container">
+        <h1>Pedant!</h1>
+        <div id="game-content">
+            <p id="question-text">Loading the cinematograph...</p>
+            <div class="options-grid" id="options-container"></div>
+        </div>
+
+        <div id="feedback-screen">
+            <div class="feedback-text" id="feedback-msg"></div>
+            <div id="reward-msg" style="font-style: italic; color: #d4af37;"></div>
+            <button class="next-btn" onclick="nextQuestion()">Continue</button>
+        </div>
+    </div>
+
+    <script>
+        const questions = [
+            {
+                q: "In F. Scott Fitzgerald's 'The Great Gatsby', what is the 'single green light' at the end of a dock a symbol for?",
+                options: ["Money", "Daisy", "The Sea", "Old Sport"],
+                answer: "Daisy"
+            },
+            {
+                q: "Which word completes the opening of T.S. Eliot's 'The Waste Land': 'April is the ______ month'?",
+                options: ["Cruellest", "Kindest", "Longest", "Dreariest"],
+                answer: "Cruellest"
+            },
+            {
+                q: "In A.A. Milne's 'Winnie-the-Pooh' (1926), what does Eeyore lose?",
+                options: ["His Thimble", "His Mind", "His Tail", "His Honey"],
+                answer: "His Tail"
+            },
+            {
+                q: "James Joyce's 'Ulysses' follows the wanderings of which protagonist through Dublin?",
+                options: ["Stephen Dedalus", "Leopold Bloom", "Buck Mulligan", "Molly Bloom"],
+                answer: "Leopold Bloom"
+            }
+        ];
+
+        const insults = [
+            "Applesauce! You're a real flat tire.",
+            "Tell it to Sweeney, you wet blanket!",
+            "You're nothing but a dewdropper!",
+            "Go chase yourself, you tomato!",
+            "Horsefeathers! You've got no onions."
+        ];
+
+        const cocktails = [
+            "A Bee's Knees (Gin, Lemon, Honey)",
+            "A Sidecar (Cognac, Cointreau, Lemon)",
+            "The Mary Pickford (Rum, Pineapple, Grenadine)",
+            "A French 75 (Gin, Champagne, Sugar)",
+            "A Gin Rickey (Gin, Lime, Seltzer)"
+        ];
+
+        let currentQ = 0;
+
+        function loadQuestion() {
+            const q = questions[currentQ];
+            document.getElementById('question-text').innerText = q.q;
+            const container = document.getElementById('options-container');
+            container.innerHTML = '';
+            
+            q.options.forEach(opt => {
+                const btn = document.createElement('button');
+                btn.innerText = opt;
+                btn.onclick = () => checkAnswer(opt);
+                container.appendChild(btn);
+            });
+        }
+
+        function checkAnswer(choice) {
+            const feedbackScreen = document.getElementById('feedback-screen');
+            const feedbackMsg = document.getElementById('feedback-msg');
+            const rewardMsg = document.getElementById('reward-msg');
+            
+            feedbackScreen.style.display = 'flex';
+
+            if (choice === questions[currentQ].answer) {
+                feedbackMsg.innerText = "Splendid! You're the Cat's Pajamas!";
+                rewardMsg.innerText = "Have a drink on the house: " + cocktails[Math.floor(Math.random() * cocktails.length)];
+            } else {
+                feedbackMsg.innerText = insults[Math.floor(Math.random() * insults.length)];
+                rewardMsg.innerText = "";
+            }
+        }
+
+        function nextQuestion() {
+            currentQ++;
+            if (currentQ >= questions.length) {
+                currentQ = 0; // Loop back for demo purposes
+            }
+            document.getElementById('feedback-screen').style.display = 'none';
+            loadQuestion();
+        }
+
+        // Initialize
+        loadQuestion();
+    </script>
+</body>
+</html>
