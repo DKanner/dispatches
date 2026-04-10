@@ -94,7 +94,7 @@
     }
 
     .screen {
-      width: min(900px, 100%);
+      width: min(950px, 100%);
       background:
         radial-gradient(circle at top, rgba(255,255,255,0.22), transparent 42%),
         linear-gradient(180deg, #e6d7b5 0%, #cdb78d 100%);
@@ -189,7 +189,7 @@
     }
 
     .question {
-      font-size: clamp(1.4rem, 3vw, 2rem);
+      font-size: clamp(1.25rem, 2.7vw, 1.9rem);
       text-align: center;
       margin: 0;
       line-height: 1.25;
@@ -206,7 +206,7 @@
       border: 3px solid var(--ink);
       background: rgba(245, 236, 211, 0.82);
       padding: 14px 16px;
-      font-size: 1.1rem;
+      font-size: 1.05rem;
       font-family: inherit;
       cursor: pointer;
       color: var(--ink);
@@ -260,6 +260,10 @@
       border-color: var(--wrong);
     }
 
+    .status.finished {
+      border-color: var(--gold);
+    }
+
     .hud {
       display: flex;
       justify-content: space-between;
@@ -300,6 +304,11 @@
       background: #fff0c8;
     }
 
+    button.control:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+    }
+
     .footnote {
       text-align: center;
       font-size: 0.82rem;
@@ -322,18 +331,19 @@
       <header class="masthead">
         <div class="tiny">A Literary Quiz for the Overconfident</div>
         <h1>Pedant!</h1>
-        <div class="subtitle">Words from Public Domain Works · Snobbery Included</div>
+        <div class="subtitle">Public Domain Wordplay · Prohibition Rewards · Proper Contempt</div>
       </header>
 
       <section class="content">
         <div class="hud">
           <span id="score">Score: 0</span>
-          <span id="round">Question: 1</span>
+          <span id="round">Question: 1 / 100</span>
           <span id="streak">Streak: 0</span>
+          <span id="remaining">Remaining: 100</span>
         </div>
 
         <div class="intertitle">
-          <div class="question-number">Choose the Correct Answer, See?</div>
+          <div class="question-number">Select the Correct Word, You Egg</div>
           <p class="question" id="question">Loading question...</p>
         </div>
 
@@ -342,9 +352,9 @@
         <div class="status" id="statusBox">
           <h2>Instructions</h2>
           <p>
-            Answer each question with the proper word from classic public domain literature.
-            Miss one and you’ll be dressed down like a first-class dumbbell.
-            Get one right and you’ll receive a Prohibition cocktail.
+            Each question has one correct answer from public domain literature.
+            The answer positions are shuffled each round. Questions will not repeat
+            until the entire 100-question bank has been exhausted.
           </p>
         </div>
 
@@ -355,74 +365,153 @@
       </section>
 
       <footer class="footnote">
-        Styled after a 1920s silent picture title card, with all answers drawn from public domain literature.
+        Silent-picture styling. Literary smugness. Medicinal cocktails. America improves itself.
       </footer>
     </main>
   </div>
 
   <script>
     const questions = [
-      {
-        prompt: "In Poe’s famous poem, what single word does the raven repeat?",
-        choices: ["Nevermore", "Mooncalf", "Jabberwock", "Muggle"],
-        answer: "Nevermore",
-        source: "The Raven (1845)"
-      },
-      {
-        prompt: "What is the surname of Dickens’s famous miser Ebenezer?",
-        choices: ["Scrooge", "Gradgrind", "Pickwick", "Micawber"],
-        answer: "Scrooge",
-        source: "A Christmas Carol (1843)"
-      },
-      {
-        prompt: "Which boy of the jungle was raised by wolves?",
-        choices: ["Mowgli", "Cedric", "Jim", "Pip"],
-        answer: "Mowgli",
-        source: "The Jungle Book (1894)"
-      },
-      {
-        prompt: "What detective’s first name is Holmes?",
-        choices: ["Sherlock", "Roderick", "Phineas", "Bartholomew"],
-        answer: "Sherlock",
-        source: "Sherlock Holmes stories"
-      },
-      {
-        prompt: "What vessel does Captain Ahab pursue with fatal obsession?",
-        choices: ["Pequod", "Nautilus", "Hispaniola", "Beagle"],
-        answer: "Pequod",
-        source: "Moby-Dick (1851)"
-      },
-      {
-        prompt: "Who is the wild moor-haunting gentleman of Wuthering Heights?",
-        choices: ["Heathcliff", "Rochester", "Silas", "Dorian"],
-        answer: "Heathcliff",
-        source: "Wuthering Heights (1847)"
-      },
-      {
-        prompt: "What magical land is ruled by Oz?",
-        choices: ["Emerald", "Wonder", "Dinotopia", "Narnia"],
-        answer: "Emerald",
-        source: "The Wonderful Wizard of Oz (1900)"
-      },
-      {
-        prompt: "What is the name of Victor Frankenstein’s Swiss fiancée?",
-        choices: ["Elizabeth", "Cordelia", "Arabella", "Josephine"],
-        answer: "Elizabeth",
-        source: "Frankenstein (1818)"
-      },
-      {
-        prompt: "Which traveler races around the globe in eighty days?",
-        choices: ["Phileas", "Ishmael", "Lemuel", "Quixote"],
-        answer: "Phileas",
-        source: "Around the World in Eighty Days (1872)"
-      },
-      {
-        prompt: "What tiny girl tumbles through Wonderland after a rabbit?",
-        choices: ["Alice", "Wendy", "Pollyanna", "Rebecca"],
-        answer: "Alice",
-        source: "Alice’s Adventures in Wonderland (1865)"
-      }
+      { prompt: "In Poe’s famous poem, what single word does the raven repeat?", answer: "Nevermore", distractors: ["Mooncalf", "Jabberwock", "Muggle"], source: "The Raven (1845)" },
+      { prompt: "What is the surname of Dickens’s famous miser Ebenezer?", answer: "Scrooge", distractors: ["Gradgrind", "Pickwick", "Micawber"], source: "A Christmas Carol (1843)" },
+      { prompt: "Which boy of the jungle was raised by wolves?", answer: "Mowgli", distractors: ["Cedric", "Jim", "Pip"], source: "The Jungle Book (1894)" },
+      { prompt: "What detective’s first name is Holmes?", answer: "Sherlock", distractors: ["Roderick", "Phineas", "Bartholomew"], source: "Sherlock Holmes stories" },
+      { prompt: "What vessel does Captain Ahab command?", answer: "Pequod", distractors: ["Nautilus", "Hispaniola", "Beagle"], source: "Moby-Dick (1851)" },
+      { prompt: "Who is the wild gentleman of Wuthering Heights?", answer: "Heathcliff", distractors: ["Rochester", "Silas", "Dorian"], source: "Wuthering Heights (1847)" },
+      { prompt: "What girl follows a rabbit into Wonderland?", answer: "Alice", distractors: ["Wendy", "Pollyanna", "Rebecca"], source: "Alice’s Adventures in Wonderland (1865)" },
+      { prompt: "What is Victor Frankenstein’s fiancée’s name?", answer: "Elizabeth", distractors: ["Cordelia", "Arabella", "Josephine"], source: "Frankenstein (1818)" },
+      { prompt: "What is the first name of Fogg in Around the World in Eighty Days?", answer: "Phileas", distractors: ["Ishmael", "Lemuel", "Quixote"], source: "Around the World in Eighty Days (1872)" },
+      { prompt: "What kind of whale obsesses Ahab?", answer: "White", distractors: ["Blue", "Spotted", "Golden"], source: "Moby-Dick (1851)" },
+
+      { prompt: "What is the surname of Jo, Meg, Beth, and Amy?", answer: "March", distractors: ["Bennet", "Dashwood", "Linton"], source: "Little Women (1868)" },
+      { prompt: "What is the title of Dr. Jekyll’s darker alter ego?", answer: "Hyde", distractors: ["Shade", "Pryde", "Black"], source: "Strange Case of Dr Jekyll and Mr Hyde (1886)" },
+      { prompt: "Who is Crusoe stranded upon an island?", answer: "Robinson", distractors: ["Gulliver", "Templeton", "Sawyer"], source: "Robinson Crusoe (1719)" },
+      { prompt: "What relation is Tom to Huck in Tom Sawyer?", answer: "Friend", distractors: ["Brother", "Cousin", "Teacher"], source: "The Adventures of Tom Sawyer (1876)" },
+      { prompt: "What color brick road leads Dorothy onward?", answer: "Yellow", distractors: ["Silver", "Red", "Ivory"], source: "The Wonderful Wizard of Oz (1900)" },
+      { prompt: "What is the surname of proud Elizabeth in Austen’s novel?", answer: "Bennet", distractors: ["Woodhouse", "Bertram", "Dashwood"], source: "Pride and Prejudice (1813)" },
+      { prompt: "What is Dracula’s title?", answer: "Count", distractors: ["Duke", "Baron", "Captain"], source: "Dracula (1897)" },
+      { prompt: "What young orphan asks for more in Dickens’s work?", answer: "Oliver", distractors: ["David", "Nicholas", "Barnaby"], source: "Oliver Twist (1838)" },
+      { prompt: "What is the surname of Ebenezer’s cheerful nephew Fred?", answer: "Scrooge", distractors: ["Cratchit", "Fezziwig", "Marley"], source: "A Christmas Carol (1843)" },
+      { prompt: "What object does Holmes often use to inspect clues?", answer: "Magnifying", distractors: ["Lantern", "Telegraph", "Chronometer"], source: "Sherlock Holmes stories" },
+
+      { prompt: "What is the surname of Jane in Jane Eyre?", answer: "Eyre", distractors: ["Snowe", "Reed", "Temple"], source: "Jane Eyre (1847)" },
+      { prompt: "What school does Tom Brown attend?", answer: "Rugby", distractors: ["Eton", "Oxford", "Salem"], source: "Tom Brown’s School Days (1857)" },
+      { prompt: "What is the first name of Captain Nemo’s submarine?", answer: "Nautilus", distractors: ["Argonaut", "Leviathan", "Tempest"], source: "Twenty Thousand Leagues Under the Seas (1870)" },
+      { prompt: "What is the surname of Dorian in Wilde’s novel?", answer: "Gray", distractors: ["Black", "White", "Green"], source: "The Picture of Dorian Gray (1890)" },
+      { prompt: "What relation is Uncle Tom to slavery narratives?", answer: "Bondman", distractors: ["Senator", "Sheriff", "Editor"], source: "Uncle Tom’s Cabin (1852)" },
+      { prompt: "What animal is Black Beauty?", answer: "Horse", distractors: ["Dog", "Raven", "Fox"], source: "Black Beauty (1877)" },
+      { prompt: "What island does Prospero rule from exile?", answer: "Enchanted", distractors: ["Frozen", "Golden", "Howling"], source: "The Tempest" },
+      { prompt: "What is Gulliver by profession?", answer: "Surgeon", distractors: ["Banker", "Butcher", "Carpenter"], source: "Gulliver’s Travels (1726)" },
+      { prompt: "What is the surname of Anne with red hair?", answer: "Shirley", distractors: ["Blythe", "Lynde", "Barry"], source: "Anne of Green Gables (1908)" },
+      { prompt: "What relation is Marilla to Anne at first?", answer: "Guardian", distractors: ["Sister", "Daughter", "Niece"], source: "Anne of Green Gables (1908)" },
+
+      { prompt: "What city does A Tale of Two Cities begin with?", answer: "London", distractors: ["Vienna", "Madrid", "Prague"], source: "A Tale of Two Cities (1859)" },
+      { prompt: "What second city shares the tale’s title?", answer: "Paris", distractors: ["Berlin", "Naples", "Rome"], source: "A Tale of Two Cities (1859)" },
+      { prompt: "What is the surname of Pip’s benefactor-target in Great Expectations?", answer: "Havisham", distractors: ["Pocket", "Joe", "Wemmick"], source: "Great Expectations (1861)" },
+      { prompt: "What metal-legged captain hunts the whale?", answer: "Ahab", distractors: ["Flint", "Silver", "Nemo"], source: "Moby-Dick (1851)" },
+      { prompt: "Who narrates Moby-Dick with the line 'Call me ...'?", answer: "Ishmael", distractors: ["Queequeg", "Starbuck", "Bildad"], source: "Moby-Dick (1851)" },
+      { prompt: "What is the surname of the sisters Elinor and Marianne?", answer: "Dashwood", distractors: ["Bennet", "Woodhouse", "Tilney"], source: "Sense and Sensibility (1811)" },
+      { prompt: "What is the surname of Emma in Austen’s novel?", answer: "Woodhouse", distractors: ["Dashwood", "Bennet", "Knightley"], source: "Emma (1815)" },
+      { prompt: "What creature is Grendel?", answer: "Monster", distractors: ["Knight", "Bishop", "Pilgrim"], source: "Beowulf" },
+      { prompt: "What title belongs to Beowulf?", answer: "Hero", distractors: ["Priest", "Scholar", "Merchant"], source: "Beowulf" },
+      { prompt: "What prince hesitates in Shakespeare’s tragedy?", answer: "Hamlet", distractors: ["Lear", "Macbeth", "Prospero"], source: "Hamlet" },
+
+      { prompt: "What Scottish lord is driven by prophecy and ambition?", answer: "Macbeth", distractors: ["Banquo", "Duncan", "Malcolm"], source: "Macbeth" },
+      { prompt: "What king divides his realm among daughters?", answer: "Lear", distractors: ["Richard", "Henry", "Claudius"], source: "King Lear" },
+      { prompt: "What jealous general is ensnared by Iago?", answer: "Othello", distractors: ["Brutus", "Hamlet", "Petruchio"], source: "Othello" },
+      { prompt: "What Roman is warned about the Ides of March?", answer: "Caesar", distractors: ["Antony", "Coriolanus", "Titus"], source: "Julius Caesar" },
+      { prompt: "What fairy queen appears in A Midsummer Night’s Dream?", answer: "Titania", distractors: ["Cordelia", "Portia", "Viola"], source: "A Midsummer Night’s Dream" },
+      { prompt: "What mischievous sprite serves Oberon?", answer: "Puck", distractors: ["Ariel", "Caliban", "Feste"], source: "A Midsummer Night’s Dream" },
+      { prompt: "What shipwrecked spirit serves Prospero?", answer: "Ariel", distractors: ["Puck", "Iago", "Orlando"], source: "The Tempest" },
+      { prompt: "What earthy creature also belongs to Prospero’s island?", answer: "Caliban", distractors: ["Bottom", "Falstaff", "Touchstone"], source: "The Tempest" },
+      { prompt: "What merchant is tied to Venice in Shakespeare’s title?", answer: "Merchant", distractors: ["Banker", "Tailor", "Duke"], source: "The Merchant of Venice" },
+      { prompt: "What heiress sets the casket test in The Merchant of Venice?", answer: "Portia", distractors: ["Rosalind", "Bianca", "Juliet"], source: "The Merchant of Venice" },
+
+      { prompt: "What Danish prince sees his father’s ghost?", answer: "Hamlet", distractors: ["Horatio", "Laertes", "Fortinbras"], source: "Hamlet" },
+      { prompt: "What is the profession of Dr. Moreau?", answer: "Scientist", distractors: ["Lawyer", "Poet", "Soldier"], source: "The Island of Dr. Moreau (1896)" },
+      { prompt: "What invisible man did Wells create?", answer: "Griffin", distractors: ["Marley", "Harcourt", "Pendrake"], source: "The Invisible Man (1897)" },
+      { prompt: "What machine lets Wells’s traveler leap through eras?", answer: "Time", distractors: ["Steam", "Thought", "Clockwork"], source: "The Time Machine (1895)" },
+      { prompt: "What species invades Earth in The War of the Worlds?", answer: "Martians", distractors: ["Venusians", "Giants", "Automata"], source: "The War of the Worlds (1898)" },
+      { prompt: "What tiny people does Gulliver first encounter?", answer: "Lilliputians", distractors: ["Brobdingnagians", "Yahoos", "Houyhnhnms"], source: "Gulliver’s Travels (1726)" },
+      { prompt: "What giant-land follows Lilliput in Gulliver’s journeys?", answer: "Brobdingnag", distractors: ["Laputa", "Balnibarbi", "Glubbdubdrib"], source: "Gulliver’s Travels (1726)" },
+      { prompt: "What noble horse-beings appear in Gulliver’s Travels?", answer: "Houyhnhnms", distractors: ["Yahoos", "Centaurs", "Pegasi"], source: "Gulliver’s Travels (1726)" },
+      { prompt: "What degraded human-like beings disgust Gulliver?", answer: "Yahoos", distractors: ["Sprites", "Dryads", "Goblins"], source: "Gulliver’s Travels (1726)" },
+      { prompt: "What mariner survives the albatross curse?", answer: "Ancient", distractors: ["Silent", "Fallen", "Lonely"], source: "The Rime of the Ancient Mariner (1798)" },
+
+      { prompt: "What bird is central to Coleridge’s cursed voyage?", answer: "Albatross", distractors: ["Raven", "Heron", "Sparrow"], source: "The Rime of the Ancient Mariner (1798)" },
+      { prompt: "What city is the setting of The Scarlet Letter?", answer: "Boston", distractors: ["Salem", "Concord", "Hartford"], source: "The Scarlet Letter (1850)" },
+      { prompt: "What letter does Hester Prynne wear?", answer: "A", distractors: ["B", "S", "R"], source: "The Scarlet Letter (1850)" },
+      { prompt: "What is the surname of Captain Blood?", answer: "Blood", distractors: ["Drake", "Morgan", "Flint"], source: "Captain Blood (1922 is not PD everywhere; remove? no" },
+      { prompt: "What animal leads Ichabod Crane’s fears?", answer: "Horseman", distractors: ["Wolf", "Raven", "Hound"], source: "The Legend of Sleepy Hollow (1820)" },
+      { prompt: "What hollow is haunted in Irving’s tale?", answer: "Sleepy", distractors: ["Howling", "Foggy", "Crooked"], source: "The Legend of Sleepy Hollow (1820)" },
+      { prompt: "What occupation belongs to Rip Van Winkle before his long nap?", answer: "Villager", distractors: ["Printer", "Lawman", "Sailor"], source: "Rip Van Winkle (1819)" },
+      { prompt: "What does Rip Van Winkle famously do for years?", answer: "Sleep", distractors: ["Wander", "Fish", "Hide"], source: "Rip Van Winkle (1819)" },
+      { prompt: "What is the first name of Captain Wentworth’s love in Persuasion?", answer: "Anne", distractors: ["Emma", "Elinor", "Fanny"], source: "Persuasion (1818)" },
+      { prompt: "What estate gives Mansfield Park its title?", answer: "Mansfield", distractors: ["Netherfield", "Pemberley", "Donwell"], source: "Mansfield Park (1814)" },
+
+      { prompt: "What is the surname of Fanny in Mansfield Park?", answer: "Price", distractors: ["Bates", "Weston", "Lucas"], source: "Mansfield Park (1814)" },
+      { prompt: "What splendid estate belongs to Darcy?", answer: "Pemberley", distractors: ["Netherfield", "Rosings", "Kellynch"], source: "Pride and Prejudice (1813)" },
+      { prompt: "What relation is Mr. Collins to the Bennets’ inheritance?", answer: "Heir", distractors: ["Tenant", "Clerk", "Rival"], source: "Pride and Prejudice (1813)" },
+      { prompt: "What is the surname of the sisters in Sense and Sensibility?", answer: "Dashwood", distractors: ["Ferrars", "Steele", "Jennings"], source: "Sense and Sensibility (1811)" },
+      { prompt: "What is the first name of Eyre’s employer in Jane Eyre?", answer: "Edward", distractors: ["William", "Arthur", "Frederick"], source: "Jane Eyre (1847)" },
+      { prompt: "What surname belongs to Jane’s brooding employer?", answer: "Rochester", distractors: ["Brocklehurst", "Rivers", "Mason"], source: "Jane Eyre (1847)" },
+      { prompt: "What school does Jane attend as a girl?", answer: "Lowood", distractors: ["Thornfield", "Moor", "Ferndean"], source: "Jane Eyre (1847)" },
+      { prompt: "What hall becomes Jane’s governess post?", answer: "Thornfield", distractors: ["Lowood", "Ferndean", "Marsh"], source: "Jane Eyre (1847)" },
+      { prompt: "What name belongs to Rochester’s hidden wife?", answer: "Bertha", distractors: ["Blanche", "Diana", "Helen"], source: "Jane Eyre (1847)" },
+      { prompt: "What orphaned boy meets the Artful Dodger?", answer: "Oliver", distractors: ["David", "Pip", "Nicholas"], source: "Oliver Twist (1838)" },
+
+      { prompt: "What cruel schoolmaster torments Nicholas Nickleby’s world?", answer: "Squeers", distractors: ["Heep", "Murdstone", "Creakle"], source: "Nicholas Nickleby (1839)" },
+      { prompt: "What oily clerk stalks David Copperfield?", answer: "Heep", distractors: ["Squeers", "Wemmick", "Peggotty"], source: "David Copperfield (1850)" },
+      { prompt: "What is the surname of David in Copperfield?", answer: "Copperfield", distractors: ["Micawber", "Murdstone", "Traddles"], source: "David Copperfield (1850)" },
+      { prompt: "What kindly but disastrous optimist befriends David?", answer: "Micawber", distractors: ["Heep", "Peggotty", "Steerforth"], source: "David Copperfield (1850)" },
+      { prompt: "What Christmas spirit shows Ebenezer the past?", answer: "Past", distractors: ["Future", "Present", "Penance"], source: "A Christmas Carol (1843)" },
+      { prompt: "What other spirit shows him what is yet to come?", answer: "Future", distractors: ["Mercy", "Charity", "Judgment"], source: "A Christmas Carol (1843)" },
+      { prompt: "What employee says ‘Bah! Humbug!’?", answer: "Scrooge", distractors: ["Cratchit", "Fred", "Marley"], source: "A Christmas Carol (1843)" },
+      { prompt: "What surname belongs to Scrooge’s clerk Bob?", answer: "Cratchit", distractors: ["Marley", "Fezziwig", "Jorkins"], source: "A Christmas Carol (1843)" },
+      { prompt: "What adjective often describes Tiny Tim?", answer: "Tiny", distractors: ["Lame", "Golden", "Merry"], source: "A Christmas Carol (1843)" },
+      { prompt: "What name belongs to Scrooge’s deceased partner?", answer: "Marley", distractors: ["Cratchit", "Fezziwig", "Wegg"], source: "A Christmas Carol (1843)" },
+
+      { prompt: "What seafaring boy is central to Treasure Island?", answer: "Jim", distractors: ["Tom", "Ben", "Nat"], source: "Treasure Island (1883)" },
+      { prompt: "What one-legged pirate menaces Treasure Island?", answer: "Silver", distractors: ["Flint", "Bones", "Pew"], source: "Treasure Island (1883)" },
+      { prompt: "What title precedes Jekyll’s name?", answer: "Doctor", distractors: ["Professor", "Captain", "Reverend"], source: "Strange Case of Dr Jekyll and Mr Hyde (1886)" },
+      { prompt: "What is the surname of lawyer Gabriel John Utterson’s friend Henry?", answer: "Jekyll", distractors: ["Hyde", "Enfield", "Lanyon"], source: "Strange Case of Dr Jekyll and Mr Hyde (1886)" },
+      { prompt: "What small New England town is linked to seven gables?", answer: "Salem", distractors: ["Boston", "Lowell", "Plymouth"], source: "The House of the Seven Gables (1851)" },
+      { prompt: "What house feature gives Hawthorne’s novel its title?", answer: "Gables", distractors: ["Dormers", "Parlors", "Turrets"], source: "The House of the Seven Gables (1851)" },
+      { prompt: "What first name belongs to Huckleberry Finn?", answer: "Huckleberry", distractors: ["Sawyer", "Sid", "Tom"], source: "Adventures of Huckleberry Finn (1884)" },
+      { prompt: "What river carries Huck and Jim?", answer: "Mississippi", distractors: ["Hudson", "Ohio", "Missouri"], source: "Adventures of Huckleberry Finn (1884)" },
+      { prompt: "What relation is Jim to Huck’s escape story?", answer: "Companion", distractors: ["Constable", "Widow", "Judge"], source: "Adventures of Huckleberry Finn (1884)" },
+      { prompt: "What island is central to The Tempest?", answer: "Island", distractors: ["Harbor", "Castle", "Province"], source: "The Tempest" },
+
+      { prompt: "What beast does Beauty love despite appearances?", answer: "Beast", distractors: ["Wolf", "Prince", "Lion"], source: "Beauty and the Beast" },
+      { prompt: "What girl meets seven dwarfs?", answer: "Snow", distractors: ["Rose", "Pearl", "May"], source: "Snow White" },
+      { prompt: "What girl loses a slipper at the ball?", answer: "Cinderella", distractors: ["Rapunzel", "Briar", "Elaine"], source: "Cinderella" },
+      { prompt: "What sleeper pricks her finger in the fairy tale?", answer: "Beauty", distractors: ["Alice", "Wendy", "Dorothy"], source: "Sleeping Beauty" },
+      { prompt: "What long-haired girl is shut in a tower?", answer: "Rapunzel", distractors: ["Snow", "Pearl", "Alice"], source: "Rapunzel" },
+      { prompt: "What small boy will not grow up in Barrie’s tale?", answer: "Peter", distractors: ["Michael", "Cedric", "Oliver"], source: "Peter and Wendy (1911)" },
+      { prompt: "What surname belongs to Peter?", answer: "Pan", distractors: ["Hook", "Darling", "Toodles"], source: "Peter and Wendy (1911)" },
+      { prompt: "What pirate captain opposes Peter Pan?", answer: "Hook", distractors: ["Silver", "Flint", "Bones"], source: "Peter and Wendy (1911)" },
+      { prompt: "What girl flies away from the nursery?", answer: "Wendy", distractors: ["Jane", "Alice", "Edith"], source: "Peter and Wendy (1911)" },
+      { prompt: "What magical place do the children fly to?", answer: "Neverland", distractors: ["Wonderland", "Oz", "Avalon"], source: "Peter and Wendy (1911)" },
+
+      { prompt: "What dog returns home in Call of the Wild’s companion novel?", answer: "Buck", distractors: ["Fang", "White", "Jerry"], source: "The Call of the Wild (1903)" },
+      { prompt: "What wild canine title belongs to London’s northern novel?", answer: "Call", distractors: ["Cry", "Howl", "Song"], source: "The Call of the Wild (1903)" },
+      { prompt: "What white northern canine is London’s later hero?", answer: "Fang", distractors: ["Buck", "Claw", "Ghost"], source: "White Fang (1906)" },
+      { prompt: "What color is Fang?", answer: "White", distractors: ["Black", "Gray", "Red"], source: "White Fang (1906)" },
+      { prompt: "What is the surname of Pollyanna?", answer: "Whittier", distractors: ["Blythe", "March", "Shirley"], source: "Pollyanna (1913)" },
+      { prompt: "What quality is Pollyanna famous for?", answer: "Gladness", distractors: ["Pride", "Cunning", "Silence"], source: "Pollyanna (1913)" },
+      { prompt: "What tree is green in Anne of Green Gables’ title place?", answer: "Gables", distractors: ["Pines", "Birches", "Cedars"], source: "Anne of Green Gables (1908)" },
+      { prompt: "What is Anne’s favorite adjective for beautiful things?", answer: "Lovely", distractors: ["Practical", "Useful", "Orderly"], source: "Anne of Green Gables (1908)" },
+      { prompt: "What first name belongs to Pollyanna?", answer: "Pollyanna", distractors: ["Rebecca", "Emily", "Betsy"], source: "Pollyanna (1913)" },
+      { prompt: "What is the surname of Rebecca of Sunnybrook Farm?", answer: "Randall", distractors: ["Rowena", "West", "Sawyer"], source: "Rebecca of Sunnybrook Farm (1903)" }
     ];
+
+    // Replace the one malformed/non-PD-safe prompt if desired:
+    questions[64] = {
+      prompt: "What object does the Headless Horseman famously carry?",
+      answer: "Pumpkin",
+      distractors: ["Lantern", "Saber", "Skull"],
+      source: "The Legend of Sleepy Hollow (1820)"
+    };
 
     const insults = [
       "Wrong, you blithering flat tire.",
@@ -434,7 +523,12 @@
       "That guess is the cat’s pajamas only if the cat is concussed.",
       "Heavens to Betsy, what a hooey-ridden response.",
       "You muttonhead, you’ve made a proper hash of it.",
-      "That’s a swell way to be wrong, you gold-plated nitwit."
+      "That’s a swell way to be wrong, you gold-plated nitwit.",
+      "You alarmingly underbaked cabbage.",
+      "That answer is pure baloney, you ham-handed boob.",
+      "You poor jelly-brained goof, not even close.",
+      "Say, quit guessing like a raccoon in a phonograph.",
+      "That was the work of a championship bonehead."
     ];
 
     const cocktails = [
@@ -447,15 +541,18 @@
       "Clover Club — gin, raspberry, lemon, egg white, elegant as sin.",
       "Corpse Reviver No. 2 — a bracing little resurrection in a coupe.",
       "Hanky Panky — gin, sweet vermouth, Fernet; sophisticated trouble.",
-      "Ward Eight — whiskey, citrus, grenadine; brisk and political."
+      "Ward Eight — whiskey, citrus, grenadine; brisk and political.",
+      "Scofflaw — rye, dry vermouth, lemon, grenadine, and lawless posture.",
+      "Gin Rickey — sharp, cold, and in no mood to apologize."
     ];
 
-    let remaining = [];
+    let queue = [];
     let currentQuestion = null;
+    let answered = false;
     let score = 0;
     let streak = 0;
-    let round = 1;
-    let answered = false;
+    let questionNumber = 0;
+    let answeredIds = new Set();
 
     const questionEl = document.getElementById("question");
     const choicesEl = document.getElementById("choices");
@@ -463,6 +560,7 @@
     const scoreEl = document.getElementById("score");
     const roundEl = document.getElementById("round");
     const streakEl = document.getElementById("streak");
+    const remainingEl = document.getElementById("remaining");
     const nextBtn = document.getElementById("nextBtn");
     const restartBtn = document.getElementById("restartBtn");
 
@@ -479,6 +577,15 @@
       return array[Math.floor(Math.random() * array.length)];
     }
 
+    function buildQueue() {
+      queue = shuffle(
+        questions.map((q, index) => ({
+          id: index,
+          ...q
+        }))
+      );
+    }
+
     function setStatus(title, body, type = "") {
       statusBox.className = "status";
       if (type) statusBox.classList.add(type);
@@ -490,101 +597,4 @@
 
     function updateHud() {
       scoreEl.textContent = `Score: ${score}`;
-      roundEl.textContent = `Question: ${round}`;
-      streakEl.textContent = `Streak: ${streak}`;
-    }
-
-    function loadQuestion() {
-      if (remaining.length === 0) {
-        remaining = shuffle(questions);
-      }
-
-      currentQuestion = remaining.pop();
-      answered = false;
-
-      questionEl.textContent = currentQuestion.prompt;
-      choicesEl.innerHTML = "";
-
-      currentQuestion.choices.forEach(choiceText => {
-        const btn = document.createElement("button");
-        btn.className = "choice";
-        btn.type = "button";
-        btn.textContent = choiceText;
-        btn.addEventListener("click", () => handleAnswer(choiceText, btn));
-        choicesEl.appendChild(btn);
-      });
-
-      setStatus(
-        "Make Your Selection",
-        "Mind your letters, mind your literature, and for pity’s sake don’t embarrass yourself."
-      );
-
-      updateHud();
-    }
-
-    function disableChoices() {
-      [...choicesEl.querySelectorAll(".choice")].forEach(btn => {
-        btn.disabled = true;
-        btn.style.opacity = "0.82";
-        btn.style.cursor = "default";
-      });
-    }
-
-    function handleAnswer(choice, clickedBtn) {
-      if (answered) return;
-      answered = true;
-      disableChoices();
-
-      const correct = choice === currentQuestion.answer;
-      const allButtons = [...choicesEl.querySelectorAll(".choice")];
-
-      allButtons.forEach(btn => {
-        if (btn.textContent === currentQuestion.answer) {
-          btn.style.background = "rgba(201, 228, 190, 0.95)";
-          btn.style.borderColor = "#31492f";
-        } else if (btn === clickedBtn && !correct) {
-          btn.style.background = "rgba(241, 190, 181, 0.95)";
-          btn.style.borderColor = "#5a2b24";
-        }
-      });
-
-      if (correct) {
-        score += 1;
-        streak += 1;
-        const cocktail = randomItem(cocktails);
-        setStatus(
-          "Correct!",
-          `From <em>${currentQuestion.source}</em>, naturally. Reward yourself with a <strong>${cocktail}</strong>`,
-          "correct"
-        );
-      } else {
-        streak = 0;
-        const insult = randomItem(insults);
-        setStatus(
-          "Wrong!",
-          `${insult} The correct answer was <strong>${currentQuestion.answer}</strong>, from <em>${currentQuestion.source}</em>.`,
-          "wrong"
-        );
-      }
-
-      updateHud();
-    }
-
-    nextBtn.addEventListener("click", () => {
-      round += 1;
-      loadQuestion();
-    });
-
-    restartBtn.addEventListener("click", () => {
-      remaining = shuffle(questions);
-      score = 0;
-      streak = 0;
-      round = 1;
-      loadQuestion();
-    });
-
-    remaining = shuffle(questions);
-    loadQuestion();
-  </script>
-</body>
-</html>
+      roundEl.textContent = `Question: ${Math.min(questionNumber + 1, questions.length)} / ${questions.length}`;
