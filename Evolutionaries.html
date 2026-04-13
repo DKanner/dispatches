@@ -89,6 +89,14 @@
     .scene .card{background:linear-gradient(180deg, rgba(246,235,210,.96), rgba(236,220,188,.92));color:var(--ink);padding:1.4rem 1.3rem;border:2px solid #4a2a16;border-radius:14px;box-shadow:var(--shadow);position:relative}
     .scene .card::before{content:"Proclamation";position:absolute;top:-12px;left:18px;background:var(--oxblood);color:#f9e5bf;padding:.3rem .7rem;border-radius:999px;border:1px solid #2d0b0b;font-size:.76rem;letter-spacing:.05em;text-transform:uppercase}
 
+    /* Donny spotlight */
+    .donny-wrap{display:grid;grid-template-columns:1.15fr .85fr;gap:1rem;align-items:stretch}
+    .donny-copy{background:linear-gradient(180deg, rgba(246,235,210,.95), rgba(236,220,188,.92));color:var(--ink);padding:1.3rem;border:2px solid #4a2a16;border-radius:14px;box-shadow:var(--shadow)}
+    .donny-copy p{font-size:1.03rem}
+    .donny-frame{margin:0;background:#1b120e;border-radius:14px;border:1px solid rgba(255,216,154,.35);overflow:hidden;box-shadow:var(--shadow)}
+    .donny-frame img{width:100%;height:100%;display:block;object-fit:cover}
+    .donny-frame figcaption{padding:.65rem .75rem;background:rgba(26,13,8,.9);color:#ffe3b4;border-top:1px solid rgba(239,196,106,.3);font-size:.9rem}
+
     /* Gallery */
     .gallery-grid{display:grid;grid-template-columns:repeat(12,1fr);gap:.9rem}
     figure{margin:0;position:relative;overflow:hidden;border-radius:12px;border:1px solid rgba(255,216,154,.35);box-shadow:var(--shadow);min-height:170px;background:#1b120e}
@@ -128,6 +136,7 @@
     @media (max-width:760px){
       .banner-wrap{grid-template-columns:1fr}
       .banner{font-size:clamp(.8rem,3.6vw,.92rem);padding:.6rem .7rem}
+      .donny-wrap{grid-template-columns:1fr}
       .g1,.g2,.g3,.g4,.g5{grid-column:1 / -1;min-height:220px}
       .detail-grid{grid-template-columns:repeat(2,minmax(140px,1fr))}
       h1{letter-spacing:.01em}
@@ -166,6 +175,20 @@
           <p>Fraunces Tavern has heard revolutions before—some armed with muskets, others with opinions, all under timber beams that remember everything. Tonight, the room receives a fresh declaration: friends assembled, glasses raised, absurdity survived, and one citizen entering age thirty-five with full constitutional swagger.</p>
           <p>Expect amber light, old wood, and a mood somewhere between chapter opening and campaign speech. History is not repeating itself. It is meeting us for a drink.</p>
         </article>
+      </div>
+    </section>
+
+    <section aria-labelledby="donny-title">
+      <div class="container donny-wrap">
+        <article class="donny-copy">
+          <h2 id="donny-title">A Birthday-Month Invitation</h2>
+          <p>In honor of Donny&rsquo;s birthday month, this invitation is officially extended to you: come celebrate with the Evolutionaries, raise a mug, and make the night memorable.</p>
+          <p>This gathering salutes Donny Kanner&mdash;the bald, red-bearded hero we all deserve&mdash;with proper tavern energy, revolutionary cheer, and full birthday-month fanfare.</p>
+        </article>
+        <figure class="donny-frame">
+          <img loading="lazy" src="donny-kanner-hero.svg" alt="Illustration of Donny Kanner, a bald red-bearded hero, lifting a mug in a historic tavern." />
+          <figcaption>Donny Kanner, tavern champion and birthday-month legend.</figcaption>
+        </figure>
       </div>
     </section>
 
