@@ -62,7 +62,7 @@
     .subhead{font-size:clamp(1rem,2vw,1.26rem);max-width:70ch;margin:.4rem 0 1.1rem;color:#ffe9bf}
     .invite{font-size:clamp(1.12rem,2.35vw,1.45rem);font-weight:700;color:#fff3d3;margin:0 0 1rem}
 
-    .banner-wrap{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:.8rem;margin-top:1.2rem}
+    .banner-wrap{display:grid;grid-template-columns:repeat(2,minmax(220px,1fr));gap:.8rem;margin-top:1.2rem;max-width:100%}
     .banner{
       background:linear-gradient(90deg,#e6c890,#f2ddb4 46%,#dfc186);
       color:#31190f;font-weight:700;padding:.68rem .95rem;
@@ -72,13 +72,18 @@
       animation:sway 5.5s ease-in-out infinite;
       font-size:clamp(.86rem,1.8vw,.98rem);
       text-align:center;
+      line-height:1.25;
+      overflow-wrap:anywhere;
     }
     .banner:nth-child(2){animation-delay:.65s}
     @keyframes sway{0%,100%{transform:rotate(-1.1deg)}50%{transform:rotate(1.2deg)}}
 
     section{padding:4rem 0;position:relative}
-    h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.07;margin:0 0 1rem;color:#ffdca0}
+    h2{font-size:clamp(1.8rem,4vw,3rem);line-height:1.07;margin:0 0 1rem;color:#2a170f}
+    section > .container > h2{color:#ffdca0}
     p{margin:.5rem 0 0}
+
+    .hero-actions{display:flex;flex-wrap:wrap;gap:.65rem;margin-top:.9rem}
 
     /* Scene */
     .scene .card{background:linear-gradient(180deg, rgba(246,235,210,.96), rgba(236,220,188,.92));color:var(--ink);padding:1.4rem 1.3rem;border:2px solid #4a2a16;border-radius:14px;box-shadow:var(--shadow);position:relative}
@@ -97,11 +102,11 @@
     .g5{grid-column:span 4;min-height:250px}
 
     /* Poem */
-    .poem-wrap{display:grid;grid-template-columns:2.1fr 1fr;gap:1rem;align-items:start}
-    .poem-card,.toast-card{border-radius:14px;padding:1.1rem 1.1rem 1.2rem;border:2px solid #5d341d;box-shadow:var(--shadow)}
+    .poem-wrap{display:grid;grid-template-columns:1fr;gap:1rem;align-items:start}
+    .poem-card{border-radius:14px;padding:1.1rem 1.1rem 1.2rem;border:2px solid #5d341d;box-shadow:var(--shadow)}
     .poem-card{background:linear-gradient(180deg, #f5e7c9, #ebd8b1);color:#26170f}
-    .toast-card{background:linear-gradient(180deg, #f0dec0, #e4c89d);color:#28140d;position:sticky;top:1rem}
-    .poem,.toast{white-space:pre-line;font-size:1.03rem}
+    .poem-card h2{color:#2a170f}
+    .poem{white-space:pre-line;font-size:1.03rem}
     .dropcap::first-letter{font-size:2.6rem;float:left;line-height:.86;padding-right:.15rem;color:#70271c;font-weight:700}
 
     /* Details */
@@ -119,10 +124,10 @@
 
     @media (max-width:980px){
       .poem-wrap{grid-template-columns:1fr}
-      .toast-card{position:relative;top:auto}
     }
     @media (max-width:760px){
       .banner-wrap{grid-template-columns:1fr}
+      .banner{font-size:clamp(.8rem,3.6vw,.92rem);padding:.6rem .7rem}
       .g1,.g2,.g3,.g4,.g5{grid-column:1 / -1;min-height:220px}
       .detail-grid{grid-template-columns:repeat(2,minmax(140px,1fr))}
       h1{letter-spacing:.01em}
@@ -141,7 +146,10 @@
           <p class="eyebrow">A Private Assembly in New York City</p>
           <h1>Evolutionaries</h1>
           <p class="subhead">Saturday, April 18th, 2026 • 9:00 PM • Fraunces Tavern, 54 Pearl St, New York, NY 10004</p>
-          <p class="invite">Join the Evolutionaries at 9:00 PM on April 18th, 2026.</p>
+          <p class="invite">On the occasion of the month of Donny&rsquo;s birthday, you are warmly invited to join the Evolutionaries at 9:00 PM on April 18th, 2026.</p>
+          <div class="hero-actions">
+            <a class="btn" href="https://partiful.com/events/GzZVkeFEykYsdRLmVAOI" target="_blank" rel="noopener noreferrer">RSVP on Partiful</a>
+          </div>
           <div class="banner-wrap" aria-label="Decorative rally banners">
             <p class="banner">Taxes Paid, let’s represent!</p>
             <p class="banner">35 and still alive, but not yet President…</p>
@@ -225,31 +233,6 @@ we met in a tavern, we laughed like citizens,
 and we voted—unanimously—for joy.</p>
         </article>
 
-        <aside class="toast-card" aria-labelledby="broom-title">
-          <h2 id="broom-title">A Toast to the Broom</h2>
-          <p class="toast">All rise for the Broom,
-patron saint of second chances
-and sworn enemy of stale dust.
-
-May it sweep out old habits
-that wore expensive shoes but went nowhere.
-May it clear the corners where yesterday sulks,
-and escort tired narratives to the curb.
-
-To the Broom:
-keeper of thresholds,
-marshal of clean beginnings,
-comedian with a wooden spine.
-
-May it brush us toward better company,
-cleaner motives,
-and floors sturdy enough for dancing.
-
-We toast not perfection,
-but passage—
-from what was cluttered
-into what is possible.</p>
-        </aside>
       </div>
     </section>
 
