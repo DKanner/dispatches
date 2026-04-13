@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Doohickey – When You Don't Know What It's Called</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,700&family=DM+Sans:wght@400;500;600&display=swap" rel="stylesheet">
+
+<style>
+  :root {
+    --amber: #F08010;
+    --amber-light: #FFA830;
+    --cream: #FDF6EC;
+    --cream-dark: #F5ECD8;
+    --bark: #2B1D0E;
+    --bark-mid: #5C3D1E;
+    --sage: #3A7D44;
+    --sage-light: #52A860;
+    --rust: #C0392B;
+    --warm-white: #FFFDF9;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: var(--bark); overflow-x: hidden; }
+
+  body::before {
+    content: '';
+    position: fixed; inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+    pointer-events: none; z-index: 999; opacity: 0.5;
+  }
+
+  /* NAV */
+  nav {
+    position: sticky; top: 0; z-index: 100;
+    background: var(--bark);
+    padding: 0 5vw;
+    display: flex; align-items: center; justify-content: space-between;
+    height: 64px;
+    box-shadow: 0 2px 20px rgba(0,0,0,0.3);
+  }
+  .nav-logo { font-family: 'Fraunces', serif; font-weight: 900; font-size: 1.5rem; color: var(--amber); text-decoration: none; }
+  .nav-logo span { color: var(--warm-white); }
+  .nav-links { display: flex; gap: 2rem; list-style: none; align-items: center; }
+  .nav-links a { color: var(--cream-dark); text-decoration: none; font-size: 0.9rem; font-weight: 500; transition: color 0.2s; }
+  .nav-links a:hover { color: var(--amber-light); }
+  .nav-cta { background: var(--amber); color: var(--bark) !important; padding: 0.5rem 1.25rem; border-radius: 100px; font-weight: 600 !important; }
+  .nav-cta:hover { background: var(--amber-light) !important; color: var(--bark) !important; }
+
+  /* HERO */
+  .hero {
+    min-height: 92vh; display: grid; grid-template-columns: 1fr 1fr;
+    align-items: center; gap: 4rem; padding: 6rem 5vw 4rem; position: relative; overflow: hidden;
+  }
+  .hero::after {
+    content: ''; position: absolute; right: -10%; top: -10%; width: 70%; height: 130%;
+    background: radial-gradient(ellipse at center, #FFD08A 0%, #F08010 40%, var(--cream) 75%);
+    opacity: 0.18; border-radius: 50%; z-index: 0;
+  }
+  .hero-text { position: relative; z-index: 1; }
+  .hero-eyebrow {
+    display: inline-block; background: var(--amber); color: var(--bark);
+    font-size: 0.75rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase;
+    padding: 0.4rem 1rem; border-radius: 100px; margin-bottom: 1.5rem;
+    animation: fadeUp 0.6s ease both;
+  }
+  .hero h1 {
+    font-family: 'Fraunces', serif; font-weight: 900;
+    font-size: clamp(3rem, 5.5vw, 5.2rem); line-height: 1.0;
+    color: var(--bark); letter-spacing: -2px; animation: fadeUp 0.7s ease 0.1s both;
+  }
+  .hero h1 em { font-style: italic; color: var(--amber); }
+  .hero-sub { font-size: 1.15rem; line-height: 1.65; color: var(--bark-mid); margin-top: 1.5rem; max-width: 500px; animation: fadeUp 0.7s ease 0.2s both; }
+  .hero-actions { display: flex; gap: 1rem; margin-top: 2.5rem; flex-wrap: wrap; animation: fadeUp 0.7s ease 0.3s both; }
+  .btn-primary {
+    background: var(--amber); color: var(--bark); padding: 1rem 2rem; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 600; text-decoration: none;
+    border: none; cursor: pointer; transition: transform 0.15s, box-shadow 0.15s, background 0.15s;
+    box-shadow: 0 4px 20px rgba(240,128,16,0.4);
+  }
+  .btn-primary:hover { background: var(--amber-light); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(240,128,16,0.45); }
+  .btn-secondary {
+    background: transparent; color: var(--bark); padding: 1rem 1.75rem; border-radius: 100px;
+    font-family: 'DM Sans', sans-serif; font-size: 1rem; font-weight: 500; text-decoration: none;
+    border: 2px solid var(--bark); cursor: pointer; transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--bark); color: var(--cream); }
+  .hero-trust { display: flex; align-items: center; gap: 0.75rem; margin-top: 2rem; animation: fadeUp 0.7s ease 0.4s both; }
+  .trust-avatars { display: flex; }
+  .trust-avatars span { width: 36px; height: 36px; border-radius: 50%; border: 2px solid var(--cream); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; margin-left: -10px; background: var(--cream-dark); }
+  .trust-avatars span:first-child { margin-left: 0; }
+  .trust-text { font-size: 0.85rem; color: var(--bark-mid); line-height: 1.4; }
+  .trust-text strong { color: var(--bark); }
+
+  /* HERO CARD */
+  .hero-visual { position: relative; z-index: 1; display: flex; justify-content: center; align-items: center; animation: fadeUp 0.8s ease 0.2s both; }
+  .phone-card {
+    background: var(--warm-white); border-radius: 28px; padding: 2rem;
+    box-shadow: 0 24px 80px rgba(43,29,14,0.2); width: 100%; max-width: 360px; position: relative;
+  }
+  .phone-card::before {
+    content: ''; position: absolute; inset: -3px; border-radius: 30px;
+    background: linear-gradient(135deg, var(--amber), var(--amber-light), var(--sage)); z-index: -1;
+  }
+  .call-header { display: flex; align-items: center; gap: 0.75rem; margin-bottom: 1.25rem; }
+  .caller-avatar { width: 52px; height: 52px; border-radius: 50%; background: linear-gradient(135deg, #F08010, #FFD08A); display: flex; align-items: center; justify-content: center; font-size: 1.6rem; flex-shrink: 0; }
+  .caller-info h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1rem; color: var(--bark); }
+  .caller-info p { font-size: 0.78rem; color: var(--bark-mid); }
+  .live-badge { margin-left: auto; background: var(--sage); color: white; font-size: 0.7rem; font-weight: 600; letter-spacing: 0.08em; padding: 0.3rem 0.7rem; border-radius: 100px; animation: pulse 2s infinite; }
+  @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.6; } }
+  .call-transcript { display: flex; flex-direction: column; gap: 0.75rem; }
+  .bubble { border-radius: 16px; padding: 0.75rem 1rem; font-size: 0.875rem; line-height: 1.5; max-width: 85%; }
+  .bubble.them { background: var(--cream-dark); color: var(--bark); border-bottom-left-radius: 4px; }
+  .bubble.me { background: var(--amber); color: var(--bark); align-self: flex-end; border-bottom-right-radius: 4px; font-weight: 500; }
+  .call-footer { margin-top: 1.25rem; display: flex; align-items: center; justify-content: space-between; }
+  .call-timer { font-size: 0.8rem; color: var(--bark-mid); font-variant-numeric: tabular-nums; }
+  .call-controls { display: flex; gap: 0.6rem; }
+  .ctrl-btn { width: 36px; height: 36px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1rem; border: none; cursor: pointer; }
+  .ctrl-btn.end { background: var(--rust); color: white; }
+  .ctrl-btn.mute { background: var(--cream-dark); color: var(--bark); }
+
+  /* PROBLEM STRIP */
+  .problem-strip { background: var(--bark); color: var(--cream); padding: 3.5rem 5vw; text-align: center; }
+  .problem-strip h2 { font-family: 'Fraunces', serif; font-size: clamp(1.4rem, 2.8vw, 2.1rem); font-weight: 700; line-height: 1.35; max-width: 720px; margin: 0 auto 1rem; }
+  .problem-strip h2 em { color: var(--amber-light); font-style: italic; }
+  .problem-strip p { color: rgba(253,246,236,0.65); font-size: 1rem; max-width: 480px; margin: 0 auto; line-height: 1.6; }
+
+  /* SECTIONS */
+  .section { padding: 6rem 5vw; }
+  .section-label { font-size: 0.75rem; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--amber); margin-bottom: 0.75rem; }
+  .section-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(2rem, 3.5vw, 3rem); line-height: 1.1; letter-spacing: -1px; color: var(--bark); max-width: 520px; }
+  .section-title em { font-style: italic; color: var(--amber); }
+
+  /* STEPS */
+  .steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 2.5rem; margin-top: 4rem; }
+  .step-num { font-family: 'Fraunces', serif; font-size: 4rem; font-weight: 900; color: var(--cream-dark); line-height: 1; margin-bottom: 0.5rem; transition: color 0.3s; }
+  .step:hover .step-num { color: var(--amber-light); }
+  .step-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+  .step h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; color: var(--bark); margin-bottom: 0.5rem; }
+  .step p { color: var(--bark-mid); font-size: 0.95rem; line-height: 1.65; }
+
+  /* EXPERTS */
+  .experts-section { background: var(--cream-dark); padding: 6rem 5vw; }
+  .experts-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.5rem; margin-top: 3.5rem; }
+  .expert-card { background: var(--warm-white); border-radius: 20px; padding: 1.75rem; transition: transform 0.25s, box-shadow 0.25s; position: relative; overflow: hidden; cursor: pointer; }
+  .expert-card::before { content: ''; position: absolute; bottom: 0; left: 0; right: 0; height: 4px; background: var(--amber); transform: scaleX(0); transition: transform 0.3s; transform-origin: left; }
+  .expert-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(43,29,14,0.12); }
+  .expert-card:hover::before { transform: scaleX(1); }
+  .expert-emoji { font-size: 3rem; display: block; margin-bottom: 1rem; }
+  .expert-card h3 { font-family: 'Fraunces', serif; font-weight: 700; font-size: 1.05rem; color: var(--bark); margin-bottom: 0.3rem; }
+  .expert-card .role { font-size: 0.78rem; color: var(--amber); font-weight: 600; text-transform: uppercase; letter-spacing: 0.06em; margin-bottom: 0.75rem; }
+  .expert-card p { font-size: 0.85rem; color: var(--bark-mid); line-height: 1.55; }
+  .expert-card .rate { margin-top: 1rem; font-weight: 600; font-size: 0.9rem; color: var(--sage); }
+
+  /* VS */
+  .vs-wrap { padding: 2rem 5vw 6rem; }
+  .vs-section { display: grid; grid-template-columns: 1fr auto 1fr; gap: 2rem; align-items: center; max-width: 900px; margin: 0 auto; }
+  .vs-col { background: var(--warm-white); border-radius: 24px; padding: 2.5rem; box-shadow: 0 4px 24px rgba(43,29,14,0.06); }
+  .vs-col.bad { opacity: 0.8; border: 2px solid #ddd; }
+  .vs-col.good { border: 2px solid var(--amber); position: relative; }
+  .vs-col.good::after { content: '✓ This'; position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--amber); color: var(--bark); font-size: 0.75rem; font-weight: 700; padding: 0.3rem 0.9rem; border-radius: 100px; letter-spacing: 0.05em; }
+  .vs-col h3 { font-family: 'Fraunces', serif; font-size: 1.3rem; font-weight: 700; margin-bottom: 1.25rem; color: var(--bark); }
+  .vs-col ul { list-style: none; display: flex; flex-direction: column; gap: 0.65rem; }
+  .vs-col ul li { font-size: 0.9rem; color: var(--bark-mid); display: flex; gap: 0.6rem; align-items: flex-start; }
+  .vs-col.bad li::before { content: '✗'; color: var(--rust); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .vs-col.good li::before { content: '✓'; color: var(--sage); font-weight: 700; flex-shrink: 0; margin-top: 1px; }
+  .vs-divider { font-family: 'Fraunces', serif; font-size: 2rem; font-weight: 900; color: var(--bark-mid); text-align: center; }
+
+  /* TESTIMONIALS */
+  .testimonials { background: var(--bark); padding: 6rem 5vw; }
+  .testimonials .section-label { color: var(--amber-light); }
+  .testimonials .section-title { color: var(--cream); max-width: 600px; }
+  .testimonials .section-title em { color: var(--amber-light); }
+  .reviews-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1.5rem; margin-top: 3rem; }
+  .review-card { background: rgba(253,246,236,0.06); border: 1px solid rgba(253,246,236,0.12); border-radius: 20px; padding: 2rem; transition: background 0.3s; }
+  .review-card:hover { background: rgba(253,246,236,0.1); }
+  .stars { font-size: 0.9rem; letter-spacing: 0.1em; margin-bottom: 1rem; color: var(--amber-light); }
+  .review-card blockquote { font-family: 'Fraunces', serif; font-size: 1rem; font-style: italic; line-height: 1.6; color: var(--cream); margin-bottom: 1.25rem; }
+  .reviewer { display: flex; align-items: center; gap: 0.75rem; }
+  .reviewer-avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--amber); display: flex; align-items: center; justify-content: center; font-size: 1.1rem; flex-shrink: 0; }
+  .reviewer-info .name { font-size: 0.85rem; font-weight: 600; color: var(--cream); }
+  .reviewer-info .location { font-size: 0.78rem; color: rgba(253,246,236,0.5); }
+
+  /* PRICING */
+  .pricing { padding: 6rem 5vw; text-align: center; }
+  .pricing-cards { display: flex; gap: 1.5rem; justify-content: center; margin-top: 3.5rem; flex-wrap: wrap; align-items: flex-start; }
+  .price-card { background: var(--warm-white); border-radius: 24px; padding: 2.5rem; width: 280px; border: 2px solid var(--cream-dark); transition: transform 0.25s, box-shadow 0.25s; position: relative; text-align: left; }
+  .price-card:hover { transform: translateY(-6px); box-shadow: 0 16px 48px rgba(43,29,14,0.1); }
+  .price-card.featured { border-color: var(--amber); transform: scale(1.04); }
+  .price-card.featured:hover { transform: scale(1.04) translateY(-6px); }
+  .price-card .badge { position: absolute; top: -14px; left: 50%; transform: translateX(-50%); background: var(--amber); color: var(--bark); font-size: 0.72rem; font-weight: 700; padding: 0.3rem 0.9rem; border-radius: 100px; letter-spacing: 0.06em; white-space: nowrap; text-transform: uppercase; }
+  .price-card h3 { font-family: 'Fraunces', serif; font-size: 1.2rem; font-weight: 700; color: var(--bark); margin-bottom: 0.25rem; }
+  .price-type { font-size: 0.85rem; color: var(--bark-mid); margin-bottom: 0.75rem; }
+  .price-card .price { font-family: 'Fraunces', serif; font-size: 2.8rem; font-weight: 900; color: var(--bark); line-height: 1; margin: 0.75rem 0 0.25rem; }
+  .price-card .price-note { font-size: 0.8rem; color: var(--bark-mid); margin-bottom: 1.5rem; }
+  .price-card ul { list-style: none; display: flex; flex-direction: column; gap: 0.6rem; margin-bottom: 2rem; }
+  .price-card li { font-size: 0.875rem; color: var(--bark-mid); display: flex; gap: 0.6rem; align-items: flex-start; }
+  .price-card li::before { content: '✓'; color: var(--sage); font-weight: 700; flex-shrink: 0; }
+  .price-btn { display: block; text-align: center; padding: 0.85rem 1.5rem; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-weight: 600; font-size: 0.95rem; text-decoration: none; transition: all 0.2s; cursor: pointer; border: none; }
+  .price-btn.primary { background: var(--amber); color: var(--bark); box-shadow: 0 4px 16px rgba(240,128,16,0.35); }
+  .price-btn.primary:hover { background: var(--amber-light); transform: translateY(-2px); }
+  .price-btn.outline { background: transparent; color: var(--bark); border: 2px solid var(--bark); }
+  .price-btn.outline:hover { background: var(--bark); color: var(--cream); }
+
+  /* CTA */
+  .cta-section { background: linear-gradient(135deg, var(--amber) 0%, #FF9A00 100%); padding: 6rem 5vw; text-align: center; position: relative; overflow: hidden; }
+  .cta-section::before { content: '🔧'; position: absolute; font-size: 18rem; opacity: 0.08; left: -4rem; top: -2rem; transform: rotate(-20deg); line-height: 1; }
+  .cta-section::after { content: '🪛'; position: absolute; font-size: 14rem; opacity: 0.08; right: -2rem; bottom: -2rem; transform: rotate(20deg); line-height: 1; }
+  .cta-section h2 { font-family: 'Fraunces', serif; font-size: clamp(2rem, 4vw, 3.5rem); font-weight: 900; color: var(--bark); line-height: 1.1; letter-spacing: -1px; margin-bottom: 1rem; position: relative; }
+  .cta-section p { font-size: 1.1rem; color: rgba(43,29,14,0.75); max-width: 500px; margin: 0 auto 2.5rem; line-height: 1.6; position: relative; }
+  .cta-btn { display: inline-block; background: var(--bark); color: var(--amber-light); padding: 1.1rem 2.5rem; border-radius: 100px; font-family: 'DM Sans', sans-serif; font-size: 1.05rem; font-weight: 600; text-decoration: none; transition: all 0.2s; box-shadow: 0 6px 24px rgba(43,29,14,0.25); position: relative; }
+  .cta-btn:hover { transform: translateY(-3px); box-shadow: 0 12px 36px rgba(43,29,14,0.3); color: var(--cream); }
+
+  /* FOOTER */
+  footer { background: var(--bark); color: rgba(253,246,236,0.6); padding: 3rem 5vw; display: grid; grid-template-columns: 1fr auto; align-items: center; gap: 2rem; }
+  footer .footer-brand { font-family: 'Fraunces', serif; font-size: 1.4rem; font-weight: 900; color: var(--amber); margin-bottom: 0.4rem; }
+  footer p { font-size: 0.85rem; line-height: 1.6; }
+  .footer-links { display: flex; gap: 1.5rem; flex-wrap: wrap; }
+  .footer-links a { color: rgba(253,246,236,0.5); text-decoration: none; font-size: 0.85rem; transition: color 0.2s; }
+  .footer-links a:hover { color: var(--amber-light); }
+
+  /* ANIMATIONS */
+  @keyframes fadeUp { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
+  .fade-in { opacity: 0; transform: translateY(20px); transition: opacity 0.6s ease, transform 0.6s ease; }
+  .fade-in.visible { opacity: 1; transform: translateY(0); }
+
+  /* RESPONSIVE */
+  @media (max-width: 1000px) {
+    .experts-grid { grid-template-columns: repeat(2, 1fr); }
+  }
+  @media (max-width: 860px) {
+    .hero { grid-template-columns: 1fr; gap: 3rem; min-height: auto; padding-top: 4rem; }
+    .hero::after { display: none; }
+    .steps { grid-template-columns: 1fr; }
+    .reviews-grid { grid-template-columns: 1fr; }
+    .vs-section { grid-template-columns: 1fr; }
+    .vs-divider { display: none; }
+    footer { grid-template-columns: 1fr; }
+  }
+  @media (max-width: 600px) {
+    .experts-grid { grid-template-columns: 1fr; }
+    .nav-links { display: none; }
+  }
+</style>
+
+</head>
+<body>
+
+<!-- NAV -->
+
+<nav>
+  <a href="#" class="nav-logo">Doohickey<span>.</span></a>
+  <ul class="nav-links">
+    <li><a href="#how">How It Works</a></li>
+    <li><a href="#experts">Experts</a></li>
+    <li><a href="#pricing">Pricing</a></li>
+    <li><a href="#pricing" class="nav-cta">Book a Call</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+  <div class="hero-text">
+    <span class="hero-eyebrow">🔧 On-Demand Home Expertise</span>
+    <h1>We know<br>what that<br><em>thing</em> is called.</h1>
+    <p class="hero-sub">Get on FaceTime with a retired plumber, electrician, or handy pro who'll talk you through any home repair challenge — on your schedule, at your pace, without the YouTube rabbit hole.</p>
+    <div class="hero-actions">
+      <a href="#pricing" class="btn-primary">Book a Call →</a>
+      <a href="#how" class="btn-secondary">See How It Works</a>
+    </div>
+    <div class="hero-trust">
+      <div class="trust-avatars">
+        <span>👴</span><span>👩</span><span>🧓</span><span>👨</span>
+      </div>
+      <p class="trust-text">
+        <strong>400+ retired pros</strong> ready to help<br>
+        across plumbing, electrical, carpentry &amp; more
+      </p>
+    </div>
+  </div>
+
+  <div class="hero-visual">
+    <div class="phone-card">
+      <div class="call-header">
+        <div class="caller-avatar">👷</div>
+        <div class="caller-info">
+          <h3>Gary K. – Retired Plumber</h3>
+          <p>38 years experience · Cleveland, OH</p>
+        </div>
+        <span class="live-badge">● LIVE</span>
+      </div>
+      <div class="call-transcript">
+        <div class="bubble them">"Okay — is that valve got a little flat handle, or is it a round knob?"</div>
+        <div class="bubble me">It's flat. Kinda orange?</div>
+        <div class="bubble them">"That's a ball valve. Good news — those are easy. Which way is the handle pointing?"</div>
+        <div class="bubble me">Toward the wall.</div>
+        <div class="bubble them" id="typing-bubble">"Perfect. That means it's open. Here's exactly what we're gonna do..."</div>
+      </div>
+      <div class="call-footer">
+        <span class="call-timer" id="call-timer">⏱ 4:27</span>
+        <div class="call-controls">
+          <button class="ctrl-btn mute" title="Mute">🎙</button>
+          <button class="ctrl-btn end" title="End">✕</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PROBLEM STRIP -->
+
+<div class="problem-strip">
+  <h2>"I found <em>six</em> different YouTube videos and none of them have the same pipe as mine."</h2>
+  <p>Sound familiar? You don't need an algorithm. You need a person who's seen your exact problem two hundred times.</p>
+</div>
+
+<!-- HOW IT WORKS -->
+
+<section class="section" id="how">
+  <p class="section-label fade-in">How It Works</p>
+  <h2 class="section-title fade-in">Fixed in three steps.<br><em>Actually fixed.</em></h2>
+  <div class="steps">
+    <div class="step fade-in">
+      <div class="step-num">01</div>
+      <div class="step-icon">🤷</div>
+      <h3>Describe Your Thing</h3>
+      <p>Tell us what's broken, leaking, stuck, or mysterious. You don't need the right words — "the thingamajig under the sink is dripping" works perfectly fine.</p>
+    </div>
+    <div class="step fade-in">
+      <div class="step-num">02</div>
+      <div class="step-icon">🤝</div>
+      <h3>Match With a Pro</h3>
+      <p>We pair you with a retired expert who's spent decades on your exact type of problem. Someone who's fixed this before and can tell just by looking.</p>
+    </div>
+    <div class="step fade-in">
+      <div class="step-num">03</div>
+      <div class="step-icon">📱</div>
+      <h3>FaceTime It Fixed</h3>
+      <p>They see what you see. They tell you what it's called, what to buy, and how to do it — step by step, no judgment. Real help from a real person.</p>
+    </div>
+  </div>
+</section>
+
+<!-- VS SECTION -->
+
+<div class="vs-wrap">
+  <div class="vs-section">
+    <div class="vs-col bad fade-in">
+      <h3>😵 The Old Way</h3>
+      <ul>
+        <li>45-minute YouTube spiral</li>
+        <li>Video filmed in 2009 on a different model</li>
+        <li>Forum post with zero replies</li>
+        <li>ChatGPT confidently wrong</li>
+        <li>Hardware store run for the wrong part</li>
+        <li>Call a plumber, $150 just to show up</li>
+      </ul>
+    </div>
+    <div class="vs-divider">vs</div>
+    <div class="vs-col good fade-in">
+      <h3>🎉 The Doohickey Way</h3>
+      <ul>
+        <li>Matched with a real expert in minutes</li>
+        <li>They see your exact setup on FaceTime</li>
+        <li>Part name, brand, and aisle number</li>
+        <li>Walk you through it, step by step</li>
+        <li>One call, one fix, no guessing</li>
+        <li>Flat fee — no surprise invoices</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- EXPERTS -->
+
+<section class="experts-section" id="experts">
+  <p class="section-label fade-in">Who You're Talking To</p>
+  <h2 class="section-title fade-in" style="max-width:600px">Real pros. Real experience.<br><em>Really retired.</em></h2>
+  <div class="experts-grid">
+    <div class="expert-card fade-in">
+      <span class="expert-emoji">🔧</span>
+      <h3>Gary K.</h3>
+      <p class="role">Master Plumber · 38 yrs</p>
+      <p>Licensed master plumber, Cleveland. Residential &amp; commercial. "If water moves through it, I've fixed it."</p>
+      <p class="rate">From $25/session</p>
+    </div>
+    <div class="expert-card fade-in">
+      <span class="expert-emoji">⚡</span>
+      <h3>Diane W.</h3>
+      <p class="role">Electrician · 24 yrs</p>
+      <p>Former electrical inspector. Switches, panels, outlets, and everything that shouldn't be sparking but is.</p>
+      <p class="rate">From $30/session</p>
+    </div>
+    <div class="expert-card fade-in">
+      <span class="expert-emoji">🪚</span>
+      <h3>Bill M.</h3>
+      <p class="role">Carpenter · 42 yrs</p>
+      <p>Built custom cabinets for 30 years. Doors, floors, trim, decks. He'll tell you which saw, which screw, and why.</p>
+      <p class="rate">From $20/session</p>
+    </div>
+    <div class="expert-card fade-in">
+      <span class="expert-emoji">❄️</span>
+      <h3>Roberta S.</h3>
+      <p class="role">HVAC Tech · 29 yrs</p>
+      <p>Your furnace is making a noise you can't describe. Perfect — neither could most people. She'll figure it out.</p>
+      <p class="rate">From $28/session</p>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+
+<section class="testimonials">
+  <p class="section-label fade-in">The Reviews Are In</p>
+  <h2 class="section-title fade-in">People who fixed things<br><em>they didn't think they could.</em></h2>
+  <div class="reviews-grid">
+    <div class="review-card fade-in">
+      <div class="stars">★★★★★</div>
+      <blockquote>"Gary immediately knew that what I was calling 'the knob under the toilet' was a supply stop valve. He had me replace it in 20 minutes. I thought I needed an emergency plumber."</blockquote>
+      <div class="reviewer">
+        <div class="reviewer-avatar">🧑</div>
+        <div class="reviewer-info">
+          <p class="name">Marcus T.</p>
+          <p class="location">Austin, TX</p>
+        </div>
+      </div>
+    </div>
+    <div class="review-card fade-in">
+      <div class="stars">★★★★★</div>
+      <blockquote>"My dad passed two years ago and I realized I had no idea how to handle anything around the house. Doohickey is basically borrowing a dad who explains things without making you feel dumb."</blockquote>
+      <div class="reviewer">
+        <div class="reviewer-avatar">👩</div>
+        <div class="reviewer-info">
+          <p class="name">Sarah L.</p>
+          <p class="location">Portland, OR</p>
+        </div>
+      </div>
+    </div>
+    <div class="review-card fade-in">
+      <div class="stars">★★★★★</div>
+      <blockquote>"Diane saved me $400. I thought I needed to rewire something. Turns out a GFCI outlet had tripped in a closet I didn't know existed. Eight-minute call. Done."</blockquote>
+      <div class="reviewer">
+        <div class="reviewer-avatar">🧔</div>
+        <div class="reviewer-info">
+          <p class="name">Tom R.</p>
+          <p class="location">Chicago, IL</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+
+<section class="pricing" id="pricing">
+  <p class="section-label fade-in">Simple Pricing</p>
+  <h2 class="section-title fade-in" style="margin: 0 auto; text-align:center;">Pay for what you need.<br><em>No subscriptions. No surprises.</em></h2>
+  <div class="pricing-cards">
+    <div class="price-card fade-in">
+      <h3>Quick Fix</h3>
+      <p class="price-type">One quick question</p>
+      <div class="price">$15</div>
+      <p class="price-note">per 15-min session</p>
+      <ul>
+        <li>Text chat with an expert</li>
+        <li>Part identification</li>
+        <li>Tool recommendations</li>
+        <li>Same-day availability</li>
+      </ul>
+      <a href="#" class="price-btn outline">Start Here</a>
+    </div>
+    <div class="price-card featured fade-in">
+      <div class="badge">⭐ Most Popular</div>
+      <h3>Walk-Through</h3>
+      <p class="price-type">Full project support</p>
+      <div class="price">$35</div>
+      <p class="price-note">per 45-min video session</p>
+      <ul>
+        <li>FaceTime or Zoom call</li>
+        <li>Expert sees your setup live</li>
+        <li>Step-by-step guidance</li>
+        <li>Parts list sent after</li>
+        <li>Free 10-min follow-up</li>
+      </ul>
+      <a href="#" class="price-btn primary">Book Now →</a>
+    </div>
+    <div class="price-card fade-in">
+      <h3>Project Buddy</h3>
+      <p class="price-type">Weekend warrior mode</p>
+      <div class="price">$79</div>
+      <p class="price-note">day-long access</p>
+      <ul>
+        <li>Unlimited calls, one expert</li>
+        <li>Planning &amp; prep session</li>
+        <li>On-call during your project</li>
+        <li>Photo review of finished work</li>
+      </ul>
+      <a href="#" class="price-btn outline">Get Started</a>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+
+<section class="cta-section">
+  <h2>Stop Googling.<br>Start Fixing.</h2>
+  <p>Whatever it's called — whatever it does — there's a retired pro who knows exactly what to do. Let's get them on the phone.</p>
+  <a href="#pricing" class="cta-btn">Book Your First Call →</a>
+</section>
+
+<!-- FOOTER -->
+
+<footer>
+  <div>
+    <div class="footer-brand">Doohickey.</div>
+    <p>When you don't know what it's called, we do.<br>© 2025 Doohickey. All rights reserved.</p>
+  </div>
+  <div class="footer-links">
+    <a href="#">How It Works</a>
+    <a href="#">Become an Expert</a>
+    <a href="#">Privacy</a>
+    <a href="#">Terms</a>
+    <a href="#">Contact</a>
+  </div>
+</footer>
+
+<script>
+  // Scroll-triggered fade-ins with stagger
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        const siblings = [...(entry.target.parentElement?.querySelectorAll('.fade-in') || [])];
+        const idx = siblings.indexOf(entry.target);
+        setTimeout(() => entry.target.classList.add('visible'), idx * 110);
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  // Live call timer
+  let seconds = 267;
+  const timerEl = document.getElementById('call-timer');
+  setInterval(() => {
+    seconds++;
+    const m = Math.floor(seconds / 60);
+    const s = seconds % 60;
+    if (timerEl) timerEl.textContent = `⏱ ${m}:${s.toString().padStart(2,'0')}`;
+  }, 1000);
+
+  // Typing animation on last bubble
+  const bubble = document.getElementById('typing-bubble');
+  if (bubble) {
+    const full = bubble.textContent;
+    bubble.textContent = '';
+    let i = 0;
+    setTimeout(() => {
+      const t = setInterval(() => {
+        bubble.textContent = full.slice(0, ++i);
+        if (i >= full.length) clearInterval(t);
+      }, 38);
+    }, 2200);
+  }
+</script>
+
+</body>
+</html>
