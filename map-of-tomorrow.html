@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Map of Tomorrow</title>
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    min-height: 100vh;
+    min-height: 100dvh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #1a1a2e;
+    font-family: 'Segoe UI', system-ui, sans-serif;
+    color: #e0e0e0;
+    position: relative;
+  }
+
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/thumb/b/b0/World_map_%28Miller_cylindrical_projection%2C_blank%29.svg/2560px-World_map_%28Miller_cylindrical_projection%2C_blank%29.svg.png');
+    background-size: cover;
+    background-position: center;
+    opacity: 0.04;
+    filter: sepia(1) hue-rotate(200deg);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  body > * { position: relative; z-index: 1; }
+
+  /* ---- header ---- */
+  .header {
+    text-align: center;
+    padding: 24px 16px 16px;
+    width: 100%;
+    flex-shrink: 0;
+  }
+
+  h1 {
+    font-size: 1.6rem;
+    margin-bottom: 0.15rem;
+    color: #e8d5b7;
+    letter-spacing: 0.05em;
+  }
+
+  .date {
+    font-size: 1rem;
+    color: #c4a882;
+    margin-bottom: 0.1rem;
+    font-weight: 600;
+    letter-spacing: 0.03em;
+  }
+
+  .subtitle {
+    font-size: 0.85rem;
+    color: #8888aa;
+  }
+
+  /* ---- form layer ---- */
+  #form-layer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    flex: 1;
+    justify-content: center;
+    width: 100%;
+    max-width: 800px;
+    padding: 10px 16px 24px;
+  }
+
+  #form-layer.crumple {
+    animation: crumple 1.2s forwards;
+  }
+
+  @keyframes crumple {
+    0%   { transform: scale(1) rotate(0deg); opacity: 1; filter: none; }
+    30%  { transform: scale(0.7) rotate(8deg); opacity: 0.9; filter: blur(1px); }
+    60%  { transform: scale(0.35) rotate(-12deg) translateY(60px); opacity: 0.7; filter: blur(2px); border-radius: 50%; }
+    100% { transform: scale(0.15) rotate(25deg) translateY(340px); opacity: 0; filter: blur(4px); border-radius: 50%; }
+  }
+
+  /* ---- circle ---- */
+  .circle-wrap {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    flex-shrink: 0;
+  }
+
+  .circle-svg {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 2;
+  }
+
+  .quad-arc {
+    fill: transparent;
+    cursor: pointer;
+    transition: fill 0.4s ease;
+  }
+
+  .quad-arc.active {
+    fill: rgba(232, 213, 183, 0.12);
+  }
+
+  .circle-bg {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background: radial-gradient(circle, #2a2a4a 0%, #1e1e38 100%);
+    border: 3px solid #444466;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .circle-bg::before,
+  .circle-bg::after {
+    content: '';
+    position: absolute;
+    background: #444466;
+  }
+  .circle-bg::before { width: 1px; height: 100%; left: 50%; top: 0; }
+  .circle-bg::after  { height: 1px; width: 100%; top: 50%; left: 0; }
+
+  .q-label {
+    position: absolute;
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    color: #666688;
+    pointer-events: none;
+    transition: color 0.4s;
+    z-index: 3;
+  }
+  .q-label.tr { top: 25%; right: 14%; }
+  .q-label.br { bottom: 25%; right: 10%; }
+  .q-label.bl { bottom: 25%; left: 14%; }
+  .q-label.tl { top: 25%; left: 14%; }
+
+  .q-label.active { color: #e8d5b7; }
+
+  /* ======== DESKTOP: speech bubbles beside circle ======== */
+  .bubble {
+    position: absolute;
+    width: 190px;
+    z-index: 4;
+  }
+
+  .bubble textarea {
+    width: 100%;
+    height: 64px;
+    padding: 10px 14px;
+    border: 2px solid #444466;
+    border-radius: 14px;
+    background: #16162b;
+    color: #e8d5b7;
+    font-family: inherit;
+    font-size: 0.9rem;
+    line-height: 1.35;
+    outline: none;
+    resize: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .bubble textarea::placeholder {
+    color: #555577;
+    font-style: italic;
+  }
+
+  .bubble textarea:focus {
+    border-color: #e8d5b7;
+    box-shadow: 0 0 14px rgba(232, 213, 183, 0.15);
+  }
+
+  .bubble.q1 { top: -46px; right: -170px; }
+  .bubble.q2 { bottom: -46px; right: -170px; }
+  .bubble.q3 { bottom: -46px; left: -170px; }
+  .bubble.q4 { top: -46px; left: -170px; }
+
+  /* ======== MOBILE: tabbed input below circle ======== */
+  .mobile-input {
+    display: none;
+    flex-direction: column;
+    align-items: center;
+    width: 100%;
+    max-width: 340px;
+    margin-top: 20px;
+  }
+
+  .tab-bar {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+  }
+
+  .tab-btn {
+    padding: 8px 14px;
+    border: 2px solid #444466;
+    border-radius: 20px;
+    background: transparent;
+    color: #666688;
+    font-family: inherit;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    cursor: pointer;
+    transition: all 0.3s;
+  }
+
+  .tab-btn.active {
+    border-color: #e8d5b7;
+    color: #e8d5b7;
+    background: rgba(232, 213, 183, 0.08);
+  }
+
+  .mobile-bubble {
+    width: 100%;
+    position: relative;
+  }
+
+
+  .mobile-bubble textarea {
+    width: 100%;
+    height: 72px;
+    padding: 12px 16px;
+    border: 2px solid #444466;
+    border-radius: 16px;
+    background: #16162b;
+    color: #e8d5b7;
+    font-family: inherit;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    outline: none;
+    resize: none;
+    transition: border-color 0.3s, box-shadow 0.3s;
+  }
+
+  .mobile-bubble textarea::placeholder {
+    color: #555577;
+    font-style: italic;
+  }
+
+  .mobile-bubble textarea:focus {
+    border-color: #e8d5b7;
+    box-shadow: 0 0 14px rgba(232, 213, 183, 0.15);
+  }
+
+  /* ---- button ---- */
+  .btn-wrap {
+    margin-top: 24px;
+    text-align: center;
+  }
+
+  button#submit-btn {
+    padding: 12px 40px;
+    font-size: 1rem;
+    font-weight: 600;
+    border: none;
+    border-radius: 30px;
+    cursor: pointer;
+    background: linear-gradient(135deg, #e8d5b7, #c4a882);
+    color: #1a1a2e;
+    letter-spacing: 0.05em;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+
+  button#submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 6px 20px rgba(232, 213, 183, 0.25);
+  }
+
+  /* ---- trash ---- */
+  #trash {
+    position: fixed;
+    bottom: 30px;
+    right: 50%;
+    transform: translateX(50%);
+    font-size: 4rem;
+    opacity: 0;
+    transition: opacity 0.4s;
+    pointer-events: none;
+    filter: drop-shadow(0 0 10px rgba(232,213,183,0.3));
+  }
+  #trash.visible { opacity: 1; }
+  #trash.catch { animation: trashCatch 0.4s ease-out; }
+
+  @keyframes trashCatch {
+    0%   { transform: translateX(50%) scale(1); }
+    50%  { transform: translateX(50%) scale(1.25); }
+    100% { transform: translateX(50%) scale(1); }
+  }
+
+  /* ---- congrats ---- */
+  #congrats {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: rgba(26, 26, 46, 0.95);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s;
+    z-index: 100;
+    padding: 20px;
+    overflow-y: auto;
+  }
+  #congrats.show { opacity: 1; pointer-events: auto; }
+  #congrats .congrats-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    min-height: 100%;
+    width: 100%;
+  }
+  #congrats h2 { font-size: 2rem; color: #e8d5b7; margin-bottom: 0.5rem; }
+  #congrats p { color: #8888aa; font-size: 1rem; margin-bottom: 1.5rem; text-align: center; }
+  #congrats img {
+    width: 300px;
+    max-width: 85vw;
+    border-radius: 12px;
+    margin-bottom: 2rem;
+    box-shadow: 0 8px 30px rgba(0,0,0,0.5);
+  }
+  #congrats button {
+    padding: 10px 32px;
+    border: 2px solid #e8d5b7;
+    border-radius: 24px;
+    background: transparent;
+    color: #e8d5b7;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: background 0.3s;
+    flex-shrink: 0;
+  }
+  #congrats button:hover { background: rgba(232,213,183,0.1); }
+
+  @media (max-width: 700px) {
+    #congrats img {
+      width: 240px;
+      margin-bottom: 1.5rem;
+    }
+    #congrats h2 { font-size: 1.6rem; }
+    #congrats p { font-size: 0.9rem; margin-bottom: 1rem; }
+  }
+
+  .confetti {
+    position: fixed;
+    width: 8px;
+    height: 8px;
+    border-radius: 2px;
+    top: -10px;
+    z-index: 101;
+    animation: confettiFall linear forwards;
+  }
+
+  @keyframes confettiFall {
+    0%   { transform: translateY(0) rotate(0deg); opacity: 1; }
+    100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+  }
+
+  /* ======== RESPONSIVE ======== */
+  @media (max-width: 700px) {
+    .header { padding: 16px 16px 10px; }
+    h1 { font-size: 1.35rem; }
+    .date { font-size: 0.9rem; }
+
+    #form-layer {
+      justify-content: flex-start;
+      padding-top: 6px;
+    }
+
+    .circle-wrap {
+      width: 220px;
+      height: 220px;
+    }
+
+    .q-label { font-size: 0.55rem; }
+
+    /* hide desktop bubbles */
+    .bubble { display: none; }
+
+    /* show mobile tabbed input */
+    .mobile-input { display: flex; }
+  }
+
+  @media (min-width: 701px) {
+    body { justify-content: center; }
+    .mobile-input { display: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <h1>Map of Tomorrow</h1>
+  <p class="date" id="tomorrow-date"></p>
+  <p class="subtitle">One intention per quadrant. Then let it go.</p>
+</div>
+
+<div id="form-layer">
+  <div class="circle-wrap">
+    <div class="circle-bg">
+      <span class="q-label tr" data-quad="0">Morning</span>
+      <span class="q-label br" data-quad="1">Midday</span>
+      <span class="q-label bl" data-quad="2">Afternoon</span>
+      <span class="q-label tl" data-quad="3">Evening</span>
+    </div>
+
+    <svg class="circle-svg" viewBox="0 0 300 300">
+      <path class="quad-arc" data-quad="0" d="M150,150 L150,0 A150,150 0 0,1 300,150 Z"/>
+      <path class="quad-arc" data-quad="1" d="M150,150 L300,150 A150,150 0 0,1 150,300 Z"/>
+      <path class="quad-arc" data-quad="2" d="M150,150 L150,300 A150,150 0 0,1 0,150 Z"/>
+      <path class="quad-arc" data-quad="3" d="M150,150 L0,150 A150,150 0 0,1 150,0 Z"/>
+    </svg>
+
+    <!-- Desktop speech bubbles -->
+    <div class="bubble q1">
+      <textarea data-quad="0" placeholder="Morning..." maxlength="120"></textarea>
+    </div>
+    <div class="bubble q2">
+      <textarea data-quad="1" placeholder="Midday..." maxlength="120"></textarea>
+    </div>
+    <div class="bubble q3">
+      <textarea data-quad="2" placeholder="Afternoon..." maxlength="120"></textarea>
+    </div>
+    <div class="bubble q4">
+      <textarea data-quad="3" placeholder="Evening..." maxlength="120"></textarea>
+    </div>
+  </div>
+
+  <!-- Mobile: tabbed single textarea below circle -->
+  <div class="mobile-input">
+    <div class="tab-bar">
+      <button class="tab-btn active" data-quad="0">Morning</button>
+      <button class="tab-btn" data-quad="1">Midday</button>
+      <button class="tab-btn" data-quad="2">Afternoon</button>
+      <button class="tab-btn" data-quad="3">Evening</button>
+    </div>
+    <div class="mobile-bubble active-bubble">
+      <textarea id="mobile-ta" placeholder="Morning..." maxlength="120"></textarea>
+    </div>
+  </div>
+
+  <div class="btn-wrap">
+    <button id="submit-btn">Release &amp; Let Go</button>
+  </div>
+</div>
+
+<div id="trash">🗑️</div>
+
+<div id="congrats">
+  <div class="congrats-inner">
+    <h2>Nicely done.</h2>
+    <p>Your map is released — tomorrow will unfold as it will.</p>
+    <img src="https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDFrcWxuOHE3bHI5ajE5NndtNnYwZ2ZnYjh0M2x0OHdma2txcGkwbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT5LMHxhOfscxPfIfm/giphy.gif" alt="celebration">
+    <button id="again-btn">Map Another Day</button>
+  </div>
+</div>
+
+<script>
+  // Date
+  const tomorrow = new Date();
+  tomorrow.setDate(tomorrow.getDate() + 1);
+  document.getElementById('tomorrow-date').textContent =
+    tomorrow.toLocaleDateString('en-US', { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' });
+
+  // Rotate celebratory gif by day of year
+  const celebGifs = [
+    'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDFrcWxuOHE3bHI5ajE5NndtNnYwZ2ZnYjh0M2x0OHdma2txcGkwbCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xT5LMHxhOfscxPfIfm/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExYnFkcXkxdGRrMjR0eXo4NHN3dHA1MjJjaDAxc2RhcHoyMXE0NjdnZiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3o7abB06u9bNzA8lu8/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExNGJ1c3VkbHU4dnlwdjYydGZiMTU2bnltOGl0a2Fldjk4NWV1YWpjaCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/l0MYt5jPR6QX5pnqM/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExODlhMjBuMWVlZnM3bDFkbmxwaTltcjk5NjFtNGVnb2piMjI5aXpkYSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26u4cqiYI30juCOGY/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWUycTM4dmttOGNvYnFqcTdtdmg3NjQ4OW53cGpqNzJmcmJ3NHF2eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/artj92V8o75VPL7AeQ/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExcjhkZTdlcjZ4OGE2YWJ4ZjJqbWR3d2tkNjZmN2k0eGI0OGZuYWVlYyZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/26BRBKqUiq586bRVm/giphy.gif',
+    'https://media.giphy.com/media/v1.Y2lkPTc5MGI3NjExdm1qMjI4anpmdzE5eGFncm5kNnFxYjF6Zjk0cHBxNmg4YjRzaWk3aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/3ohzAu2U1tOafteBa0/giphy.gif',
+  ];
+  const dayOfYear = Math.floor((tomorrow - new Date(tomorrow.getFullYear(),0,0)) / 86400000);
+  const todaysGif = celebGifs[dayOfYear % celebGifs.length];
+  document.querySelector('#congrats img').src = todaysGif;
+
+  const formLayer = document.getElementById('form-layer');
+  const submitBtn = document.getElementById('submit-btn');
+  const trash     = document.getElementById('trash');
+  const congrats  = document.getElementById('congrats');
+  const againBtn  = document.getElementById('again-btn');
+  const arcs      = document.querySelectorAll('.quad-arc');
+  const labels    = document.querySelectorAll('.q-label');
+  const bubbles   = document.querySelectorAll('.bubble');
+  const desktopTAs = document.querySelectorAll('.bubble textarea');
+  const tabBtns   = document.querySelectorAll('.tab-btn');
+  const mobileTa  = document.getElementById('mobile-ta');
+  const mobileBubble = document.querySelector('.mobile-bubble');
+
+  const quadNames = ['Morning', 'Midday', 'Afternoon', 'Evening'];
+  const placeholders = ['Morning...', 'Midday...', 'Afternoon...', 'Evening...'];
+
+  // Shared data store for all 4 quadrants
+  const values = ['', '', '', ''];
+  let activeQuad = 0;
+
+  function isMobile() {
+    return window.innerWidth <= 700;
+  }
+
+  function highlightQuad(idx) {
+    const q = String(idx);
+    arcs.forEach(a => a.classList.toggle('active', a.dataset.quad === q));
+    labels.forEach(l => l.classList.toggle('active', l.dataset.quad === q));
+    bubbles.forEach(b => {
+      const ta = b.querySelector('textarea');
+      b.classList.toggle('active-bubble', ta && ta.dataset.quad === q);
+    });
+  }
+
+  function clearHighlight() {
+    arcs.forEach(a => a.classList.remove('active'));
+    labels.forEach(l => l.classList.remove('active'));
+    bubbles.forEach(b => b.classList.remove('active-bubble'));
+  }
+
+  // ---- Desktop: wire focus/blur ----
+  desktopTAs.forEach(ta => {
+    const qi = parseInt(ta.dataset.quad);
+    ta.addEventListener('focus', () => highlightQuad(qi));
+    ta.addEventListener('blur', () => clearHighlight());
+    ta.addEventListener('input', () => { values[qi] = ta.value; });
+  });
+
+  // ---- Mobile: tabs + SVG click ----
+  function switchMobileTab(idx) {
+    // save current
+    values[activeQuad] = mobileTa.value;
+    activeQuad = idx;
+
+    // update tabs
+    tabBtns.forEach(b => b.classList.toggle('active', parseInt(b.dataset.quad) === idx));
+
+    // update textarea
+    mobileTa.value = values[idx];
+    mobileTa.placeholder = placeholders[idx];
+    mobileBubble.classList.add('active-bubble');
+
+    highlightQuad(idx);
+    mobileTa.focus();
+  }
+
+  tabBtns.forEach(btn => {
+    btn.addEventListener('click', () => switchMobileTab(parseInt(btn.dataset.quad)));
+  });
+
+  // Save on mobile input
+  mobileTa.addEventListener('input', () => { values[activeQuad] = mobileTa.value; });
+  mobileTa.addEventListener('focus', () => highlightQuad(activeQuad));
+  mobileTa.addEventListener('blur', () => clearHighlight());
+
+  // Click SVG quadrants — on mobile, switch tab; on desktop, focus the bubble
+  arcs.forEach(arc => {
+    arc.addEventListener('click', () => {
+      const qi = parseInt(arc.dataset.quad);
+      if (isMobile()) {
+        switchMobileTab(qi);
+      } else {
+        const ta = document.querySelector(`.bubble textarea[data-quad="${qi}"]`);
+        if (ta) ta.focus();
+      }
+    });
+  });
+
+  // ---- Sync desktop textareas from values when resizing ----
+  function syncDesktop() {
+    desktopTAs.forEach(ta => { ta.value = values[parseInt(ta.dataset.quad)]; });
+  }
+  function syncMobile() {
+    mobileTa.value = values[activeQuad];
+  }
+
+  window.addEventListener('resize', () => {
+    if (isMobile()) syncMobile();
+    else syncDesktop();
+  });
+
+  // ---- Desktop tab with Tab key ----
+  desktopTAs.forEach((ta, idx) => {
+    ta.addEventListener('keydown', (e) => {
+      if (e.key === 'Tab') {
+        e.preventDefault();
+        const next = (idx + 1) % desktopTAs.length;
+        desktopTAs[next].focus();
+      }
+    });
+  });
+
+  // ---- Submit ----
+  function getAllValues() {
+    // ensure mobile value is saved
+    if (isMobile()) values[activeQuad] = mobileTa.value;
+    else desktopTAs.forEach(ta => { values[parseInt(ta.dataset.quad)] = ta.value; });
+    return values;
+  }
+
+  submitBtn.addEventListener('click', () => {
+    const v = getAllValues();
+    if (v.every(s => !s.trim())) {
+      if (isMobile()) {
+        mobileTa.focus();
+        mobileTa.style.borderColor = '#cc6666';
+        setTimeout(() => mobileTa.style.borderColor = '', 800);
+      } else {
+        desktopTAs[0].focus();
+        desktopTAs[0].style.borderColor = '#cc6666';
+        setTimeout(() => desktopTAs[0].style.borderColor = '', 800);
+      }
+      return;
+    }
+
+    trash.classList.add('visible');
+    formLayer.classList.add('crumple');
+    setTimeout(() => trash.classList.add('catch'), 1100);
+    setTimeout(() => {
+      trash.classList.remove('visible', 'catch');
+      congrats.classList.add('show');
+      spawnConfetti();
+    }, 1700);
+  });
+
+  againBtn.addEventListener('click', () => {
+    congrats.classList.remove('show');
+    formLayer.classList.remove('crumple');
+    values.fill('');
+    desktopTAs.forEach(ta => ta.value = '');
+    mobileTa.value = '';
+    activeQuad = 0;
+    tabBtns.forEach(b => b.classList.toggle('active', b.dataset.quad === '0'));
+    mobileTa.placeholder = placeholders[0];
+    clearHighlight();
+    document.querySelectorAll('.confetti').forEach(c => c.remove());
+  });
+
+  function spawnConfetti() {
+    const colors = ['#e8d5b7','#c4a882','#7b68ee','#ff6b6b','#48dbfb','#feca57','#ff9ff3'];
+    for (let i = 0; i < 60; i++) {
+      const c = document.createElement('div');
+      c.className = 'confetti';
+      c.style.left = Math.random() * 100 + 'vw';
+      c.style.background = colors[Math.floor(Math.random() * colors.length)];
+      c.style.animationDuration = (2 + Math.random() * 2) + 's';
+      c.style.animationDelay = (Math.random() * 0.8) + 's';
+      c.style.width = (6 + Math.random() * 6) + 'px';
+      c.style.height = (6 + Math.random() * 6) + 'px';
+      document.body.appendChild(c);
+    }
+  }
+
+  // Initial highlight on mobile
+  if (isMobile()) highlightQuad(0);
+</script>
+</body>
+</html>
